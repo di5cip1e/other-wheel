@@ -1,0 +1,22 @@
+{
+  "name": "Auto-commit on Task Completion",
+  "description": "Automatically commits changes to Git repository when a task is marked as completed",
+  "trigger": {
+    "type": "task_status_change",
+    "conditions": {
+      "status": "completed",
+      "taskFilePath": ".kiro/specs/wheel-within-wheel-game/tasks.md"
+    }
+  },
+  "actions": [
+    {
+      "type": "git_commit",
+      "config": {
+        "message": "Complete task: {{task.name}}\n\n{{task.description}}\n\nRequirements addressed: {{task.requirements}}",
+        "addAll": true,
+        "push": false
+      }
+    }
+  ],
+  "enabled": true
+}
