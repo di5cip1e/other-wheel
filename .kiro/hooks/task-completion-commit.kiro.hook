@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Task Completion Auto-Commit",
+  "description": "Automatically commits all changes to GitHub when a task is marked as completed",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.md",
+      "**/*.json",
+      "**/*.ts",
+      "**/*.js",
+      "**/*.html",
+      "**/*.css",
+      "**/*.txt"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A task has been completed. Please commit all current changes to the git repository with an appropriate commit message that describes the completed work. Use git add . to stage all changes, then create a meaningful commit message based on the recent file modifications, and push the changes to the remote repository."
+  }
+}
