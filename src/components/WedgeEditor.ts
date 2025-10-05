@@ -52,7 +52,7 @@ export class WedgeEditor {
       id: 'wedge-' + Date.now(),
       label: 'New Option',
       weight: 1,
-      color: '#4ecdc4'
+      color: '#4ecdc4',
     };
   }
 
@@ -107,7 +107,7 @@ export class WedgeEditor {
         this.wedge.label = value;
         this.updateSubtitle();
         this.triggerUpdate();
-      }
+      },
     );
     
     // Weight input
@@ -121,7 +121,7 @@ export class WedgeEditor {
       (value) => {
         this.wedge.weight = value;
         this.triggerUpdate();
-      }
+      },
     );
     
     // Color input
@@ -133,7 +133,7 @@ export class WedgeEditor {
         this.wedge.color = value;
         this.updatePreview();
         this.triggerUpdate();
-      }
+      },
     );
     
     section.appendChild(title);
@@ -182,7 +182,7 @@ export class WedgeEditor {
     const options = [
       { value: 'text', label: 'Text Only' },
       { value: 'image', label: 'Image' },
-      { value: 'video', label: 'Video' }
+      { value: 'video', label: 'Video' },
     ];
     
     options.forEach(option => {
@@ -203,7 +203,7 @@ export class WedgeEditor {
         this.wedge.media = {
           type,
           src: '',
-          alt: this.wedge.label
+          alt: this.wedge.label,
         };
       }
       
@@ -230,7 +230,7 @@ export class WedgeEditor {
 
   private updateMediaContentInput(): void {
     const container = document.getElementById('media-content-container');
-    if (!container) return;
+    if (!container) {return;}
     
     container.innerHTML = '';
     
@@ -261,7 +261,7 @@ export class WedgeEditor {
           this.updateMediaPreview();
           this.triggerUpdate();
         }
-      }
+      },
     );
     
     // Alt text input (for images)
@@ -275,7 +275,7 @@ export class WedgeEditor {
             this.wedge.media.alt = value;
             this.triggerUpdate();
           }
-        }
+        },
       );
       container.appendChild(altContainer);
     }
@@ -325,7 +325,7 @@ export class WedgeEditor {
     label: string, 
     value: string, 
     placeholder: string, 
-    onChange: (value: string) => void
+    onChange: (value: string) => void,
   ): HTMLElement {
     const container = document.createElement('div');
     container.className = 'input-container';
@@ -356,7 +356,7 @@ export class WedgeEditor {
     max: number, 
     step: number, 
     placeholder: string,
-    onChange: (value: number) => void
+    onChange: (value: number) => void,
   ): HTMLElement {
     const container = document.createElement('div');
     container.className = 'input-container';
@@ -390,7 +390,7 @@ export class WedgeEditor {
     label: string, 
     value: string, 
     placeholder: string,
-    onChange: (value: string) => void
+    onChange: (value: string) => void,
   ): HTMLElement {
     const container = document.createElement('div');
     container.className = 'input-container color-input-container';
@@ -444,7 +444,7 @@ export class WedgeEditor {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
     
-    if (!file) return;
+    if (!file) {return;}
     
     try {
       // Use MediaManager to create media from file
@@ -477,7 +477,7 @@ export class WedgeEditor {
 
   private updatePreview(): void {
     const preview = document.getElementById('wedge-preview');
-    if (!preview) return;
+    if (!preview) {return;}
     
     preview.innerHTML = '';
     preview.style.backgroundColor = this.wedge.color;
@@ -499,7 +499,7 @@ export class WedgeEditor {
   }
 
   private async updateMediaPreview(): Promise<void> {
-    if (!this.mediaPreviewContainer) return;
+    if (!this.mediaPreviewContainer) {return;}
     
     this.mediaPreviewContainer.innerHTML = '';
     
@@ -650,7 +650,7 @@ export class WedgeEditor {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -673,26 +673,26 @@ export class WedgeEditor {
     messageElement.style.fontWeight = '500';
     
     switch (type) {
-      case 'success':
-        messageElement.style.backgroundColor = '#d4edda';
-        messageElement.style.color = '#155724';
-        messageElement.style.border = '1px solid #c3e6cb';
-        break;
-      case 'error':
-        messageElement.style.backgroundColor = '#f8d7da';
-        messageElement.style.color = '#721c24';
-        messageElement.style.border = '1px solid #f5c6cb';
-        break;
-      case 'warning':
-        messageElement.style.backgroundColor = '#fff3cd';
-        messageElement.style.color = '#856404';
-        messageElement.style.border = '1px solid #ffeaa7';
-        break;
-      case 'info':
-        messageElement.style.backgroundColor = '#d1ecf1';
-        messageElement.style.color = '#0c5460';
-        messageElement.style.border = '1px solid #bee5eb';
-        break;
+    case 'success':
+      messageElement.style.backgroundColor = '#d4edda';
+      messageElement.style.color = '#155724';
+      messageElement.style.border = '1px solid #c3e6cb';
+      break;
+    case 'error':
+      messageElement.style.backgroundColor = '#f8d7da';
+      messageElement.style.color = '#721c24';
+      messageElement.style.border = '1px solid #f5c6cb';
+      break;
+    case 'warning':
+      messageElement.style.backgroundColor = '#fff3cd';
+      messageElement.style.color = '#856404';
+      messageElement.style.border = '1px solid #ffeaa7';
+      break;
+    case 'info':
+      messageElement.style.backgroundColor = '#d1ecf1';
+      messageElement.style.color = '#0c5460';
+      messageElement.style.border = '1px solid #bee5eb';
+      break;
     }
     
     // Insert at the top of the container

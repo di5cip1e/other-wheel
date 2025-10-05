@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env, argv) => {
-  const isProduction = argv.mode === 'production';
+  const isProduction = argv.mode === 'production' || process.env.NODE_ENV === 'production';
   
   return {
     entry: './src/index.ts',
@@ -59,7 +59,33 @@ module.exports = (env, argv) => {
     optimization: {
       splitChunks: {
         chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+          common: {
+            name: 'common',
+            minChunks: 2,
+            chunks: 'all',
+            enforce: true,
+          },
+        },
       },
+      usedExports: true,
+      sideEffects: false,
+      ...(isProduction && {
+        minimize: true,
+        minimizer: [
+          '...',
+        ],
+      }),
+    },
+    performance: {
+      hints: isProduction ? 'warning' : false,
+      maxEntrypointSize: 300000, // 300KB
+      maxAssetSize: 300000, // 300KB
     },
   };
 };

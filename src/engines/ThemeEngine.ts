@@ -122,7 +122,7 @@ export class ThemeEngine {
       currentThemeId: 'default',
       customThemes: [],
       enableAnimations: true,
-      reducedMotion: false
+      reducedMotion: false,
     };
   }
 
@@ -144,7 +144,7 @@ export class ThemeEngine {
         success: '#10b981',
         warning: '#f59e0b',
         error: '#ef4444',
-        info: '#3b82f6'
+        info: '#3b82f6',
       },
       typography: {
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -155,20 +155,20 @@ export class ThemeEngine {
           lg: '1.125rem',
           xl: '1.25rem',
           '2xl': '1.5rem',
-          '3xl': '1.875rem'
+          '3xl': '1.875rem',
         },
         fontWeight: {
           light: 300,
           normal: 400,
           medium: 500,
           semibold: 600,
-          bold: 700
+          bold: 700,
         },
         lineHeight: {
           tight: 1.25,
           normal: 1.5,
-          relaxed: 1.75
-        }
+          relaxed: 1.75,
+        },
       },
       spacing: {
         xs: '0.25rem',
@@ -177,7 +177,7 @@ export class ThemeEngine {
         lg: '1.5rem',
         xl: '2rem',
         '2xl': '3rem',
-        '3xl': '4rem'
+        '3xl': '4rem',
       },
       borderRadius: {
         none: '0',
@@ -185,27 +185,27 @@ export class ThemeEngine {
         md: '0.375rem',
         lg: '0.5rem',
         xl: '0.75rem',
-        full: '9999px'
+        full: '9999px',
       },
       shadows: {
         sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
         lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
       },
       animations: {
         duration: {
           fast: '150ms',
           normal: '300ms',
-          slow: '500ms'
+          slow: '500ms',
         },
         easing: {
           linear: 'linear',
           easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
           easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-          easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)'
-        }
-      }
+          easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        },
+      },
     });
 
     // Dark theme
@@ -225,7 +225,7 @@ export class ThemeEngine {
         success: '#34d399',
         warning: '#fbbf24',
         error: '#f87171',
-        info: '#60a5fa'
+        info: '#60a5fa',
       },
       typography: {
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -236,20 +236,20 @@ export class ThemeEngine {
           lg: '1.125rem',
           xl: '1.25rem',
           '2xl': '1.5rem',
-          '3xl': '1.875rem'
+          '3xl': '1.875rem',
         },
         fontWeight: {
           light: 300,
           normal: 400,
           medium: 500,
           semibold: 600,
-          bold: 700
+          bold: 700,
         },
         lineHeight: {
           tight: 1.25,
           normal: 1.5,
-          relaxed: 1.75
-        }
+          relaxed: 1.75,
+        },
       },
       spacing: {
         xs: '0.25rem',
@@ -258,7 +258,7 @@ export class ThemeEngine {
         lg: '1.5rem',
         xl: '2rem',
         '2xl': '3rem',
-        '3xl': '4rem'
+        '3xl': '4rem',
       },
       borderRadius: {
         none: '0',
@@ -266,27 +266,27 @@ export class ThemeEngine {
         md: '0.375rem',
         lg: '0.5rem',
         xl: '0.75rem',
-        full: '9999px'
+        full: '9999px',
       },
       shadows: {
         sm: '0 1px 2px 0 rgba(0, 0, 0, 0.3)',
         md: '0 4px 6px -1px rgba(0, 0, 0, 0.4)',
         lg: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.4)'
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.4)',
       },
       animations: {
         duration: {
           fast: '150ms',
           normal: '300ms',
-          slow: '500ms'
+          slow: '500ms',
         },
         easing: {
           linear: 'linear',
           easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
           easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-          easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)'
-        }
-      }
+          easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        },
+      },
     });
 
     // Retro theme
@@ -306,7 +306,7 @@ export class ThemeEngine {
         success: '#00b894',
         warning: '#fdcb6e',
         error: '#e17055',
-        info: '#74b9ff'
+        info: '#74b9ff',
       },
       typography: {
         fontFamily: '"Courier New", monospace',
@@ -317,20 +317,20 @@ export class ThemeEngine {
           lg: '1.125rem',
           xl: '1.25rem',
           '2xl': '1.5rem',
-          '3xl': '1.875rem'
+          '3xl': '1.875rem',
         },
         fontWeight: {
           light: 300,
           normal: 400,
           medium: 500,
           semibold: 600,
-          bold: 700
+          bold: 700,
         },
         lineHeight: {
           tight: 1.25,
           normal: 1.5,
-          relaxed: 1.75
-        }
+          relaxed: 1.75,
+        },
       },
       spacing: {
         xs: '0.25rem',
@@ -339,7 +339,7 @@ export class ThemeEngine {
         lg: '1.5rem',
         xl: '2rem',
         '2xl': '3rem',
-        '3xl': '4rem'
+        '3xl': '4rem',
       },
       borderRadius: {
         none: '0',
@@ -347,27 +347,27 @@ export class ThemeEngine {
         md: '4px',
         lg: '6px',
         xl: '8px',
-        full: '9999px'
+        full: '9999px',
       },
       shadows: {
         sm: '2px 2px 0 rgba(0, 0, 0, 0.3)',
         md: '4px 4px 0 rgba(0, 0, 0, 0.3)',
         lg: '6px 6px 0 rgba(0, 0, 0, 0.3)',
-        xl: '8px 8px 0 rgba(0, 0, 0, 0.3)'
+        xl: '8px 8px 0 rgba(0, 0, 0, 0.3)',
       },
       animations: {
         duration: {
           fast: '100ms',
           normal: '200ms',
-          slow: '400ms'
+          slow: '400ms',
         },
         easing: {
           linear: 'linear',
           easeIn: 'steps(4, end)',
           easeOut: 'steps(4, start)',
-          easeInOut: 'steps(8, end)'
-        }
-      }
+          easeInOut: 'steps(8, end)',
+        },
+      },
     });
   }
 
@@ -407,7 +407,7 @@ export class ThemeEngine {
    * Apply theme styles to the document
    */
   private applyTheme(theme: VisualTheme): void {
-    if (!this.styleElement) return;
+    if (!this.styleElement) {return;}
 
     const cssVariables = this.generateCSSVariables(theme);
     const componentStyles = this.generateComponentStyles(theme);
@@ -650,7 +650,7 @@ export class ThemeEngine {
   getAllThemes(): VisualTheme[] {
     return [
       ...Array.from(this.builtInThemes.values()),
-      ...this.config.customThemes
+      ...this.config.customThemes,
     ];
   }
 
@@ -714,7 +714,7 @@ export class ThemeEngine {
    */
   exportTheme(themeId: string): string | null {
     const theme = this.getTheme(themeId);
-    if (!theme) return null;
+    if (!theme) {return null;}
     
     return JSON.stringify(theme, null, 2);
   }

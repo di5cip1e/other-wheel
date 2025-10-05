@@ -36,13 +36,13 @@ describe('Rule System Integration', () => {
         conditions: [{
           id: 'cond1',
           type: 'specific_wedge',
-          parameters: { wedgeId: 'red-wedge', wheel: 'outer' }
+          parameters: { wedgeId: 'red-wedge', wheel: 'outer' },
         }],
         outcome: 'win',
         points: 100,
         message: 'Congratulations! You hit the red wedge!',
         createdAt: '2023-01-01T00:00:00Z',
-        modifiedAt: '2023-01-01T00:00:00Z'
+        modifiedAt: '2023-01-01T00:00:00Z',
       };
 
       ruleEngine.addRule(winRule);
@@ -54,11 +54,11 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'red-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Red',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 50,
         gameHistory: [],
-        roundNumber: 1
+        roundNumber: 1,
       };
 
       const results = ruleEngine.evaluateRules(context);
@@ -81,13 +81,13 @@ describe('Rule System Integration', () => {
         conditions: [{
           id: 'cond1',
           type: 'avoid_wedge',
-          parameters: { wedgeId: 'black-wedge', wheel: 'outer' }
+          parameters: { wedgeId: 'black-wedge', wheel: 'outer' },
         }],
         outcome: 'lose',
         points: -50,
         message: 'Game Over! You hit the black wedge!',
         createdAt: '2023-01-01T00:00:00Z',
-        modifiedAt: '2023-01-01T00:00:00Z'
+        modifiedAt: '2023-01-01T00:00:00Z',
       };
 
       // Lower priority continue rule
@@ -100,13 +100,13 @@ describe('Rule System Integration', () => {
         conditions: [{
           id: 'cond1',
           type: 'score_threshold',
-          parameters: { threshold: 0, operator: 'gte' }
+          parameters: { threshold: 0, operator: 'gte' },
         }],
         outcome: 'continue',
         points: 10,
         message: 'Keep playing!',
         createdAt: '2023-01-01T00:00:00Z',
-        modifiedAt: '2023-01-01T00:00:00Z'
+        modifiedAt: '2023-01-01T00:00:00Z',
       };
 
       ruleEngine.addRule(loseRule);
@@ -119,11 +119,11 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'black-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Black',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 50,
         gameHistory: [],
-        roundNumber: 1
+        roundNumber: 1,
       };
 
       const loseResults = ruleEngine.evaluateRules(loseContext);
@@ -137,11 +137,11 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'red-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Red',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 50,
         gameHistory: [],
-        roundNumber: 1
+        roundNumber: 1,
       };
 
       const continueResults = ruleEngine.evaluateRules(continueContext);
@@ -164,21 +164,21 @@ describe('Rule System Integration', () => {
             parameters: { 
               outerWedgeId: 'red-wedge', 
               innerWedgeId: 'blue-wedge', 
-              matchType: 'exact' 
-            }
+              matchType: 'exact', 
+            },
           },
           {
             id: 'cond2',
             type: 'score_threshold',
             parameters: { threshold: 100, operator: 'gte' },
-            operator: 'AND'
-          }
+            operator: 'AND',
+          },
         ],
         outcome: 'win',
         points: 500,
         message: 'JACKPOT! Perfect combination with high score!',
         createdAt: '2023-01-01T00:00:00Z',
-        modifiedAt: '2023-01-01T00:00:00Z'
+        modifiedAt: '2023-01-01T00:00:00Z',
       };
 
       ruleEngine.addRule(complexRule);
@@ -190,11 +190,11 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'red-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Red',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 50, // Below threshold
         gameHistory: [],
-        roundNumber: 1
+        roundNumber: 1,
       };
 
       const lowScoreResults = ruleEngine.evaluateRules(lowScoreContext);
@@ -203,7 +203,7 @@ describe('Rule System Integration', () => {
       // Test with matching combination and high score
       const highScoreContext: RuleEvaluationContext = {
         ...lowScoreContext,
-        playerScore: 150 // Above threshold
+        playerScore: 150, // Above threshold
       };
 
       const highScoreResults = ruleEngine.evaluateRules(highScoreContext);
@@ -222,13 +222,13 @@ describe('Rule System Integration', () => {
         conditions: [{
           id: 'cond1',
           type: 'consecutive_wins',
-          parameters: { count: 3 }
+          parameters: { count: 3 },
         }],
         outcome: 'continue',
         points: 50,
         message: 'Win streak bonus!',
         createdAt: '2023-01-01T00:00:00Z',
-        modifiedAt: '2023-01-01T00:00:00Z'
+        modifiedAt: '2023-01-01T00:00:00Z',
       };
 
       ruleEngine.addRule(streakRule);
@@ -240,15 +240,15 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'red-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Red',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 100,
         gameHistory: [
           { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 10, timestamp: '2023-01-01' },
           { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 15, timestamp: '2023-01-02' },
-          { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 20, timestamp: '2023-01-03' }
+          { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 20, timestamp: '2023-01-03' },
         ],
-        roundNumber: 4
+        roundNumber: 4,
       };
 
       const results = ruleEngine.evaluateRules(streakContext);
@@ -318,11 +318,11 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'red-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Red',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 50,
         gameHistory: [],
-        roundNumber: 1
+        roundNumber: 1,
       };
 
       const results = ruleEngine.evaluateRules(context);
@@ -382,12 +382,12 @@ describe('Rule System Integration', () => {
           conditions: [{
             id: `cond-${i}`,
             type: 'score_threshold',
-            parameters: { threshold: i * 10, operator: 'gte' }
+            parameters: { threshold: i * 10, operator: 'gte' },
           }],
           outcome: 'continue',
           points: i,
           createdAt: '2023-01-01T00:00:00Z',
-          modifiedAt: '2023-01-01T00:00:00Z'
+          modifiedAt: '2023-01-01T00:00:00Z',
         };
         ruleEngine.addRule(rule);
       }
@@ -398,11 +398,11 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'red-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Red',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 500,
         gameHistory: [],
-        roundNumber: 1
+        roundNumber: 1,
       };
 
       const startTime = performance.now();
@@ -424,8 +424,8 @@ describe('Rule System Integration', () => {
         conditions: [{
           id: 'bad-condition',
           type: 'unknown_type' as any,
-          parameters: { invalid: 'data' }
-        }]
+          parameters: { invalid: 'data' },
+        }],
       } as Rule;
 
       // Should not throw when adding malformed rule
@@ -437,11 +437,11 @@ describe('Rule System Integration', () => {
           outerWedgeId: 'red-wedge',
           innerWedgeId: 'blue-wedge',
           outerWedgeLabel: 'Red',
-          innerWedgeLabel: 'Blue'
+          innerWedgeLabel: 'Blue',
         },
         playerScore: 50,
         gameHistory: [],
-        roundNumber: 1
+        roundNumber: 1,
       };
 
       // Should not throw during evaluation
@@ -458,28 +458,28 @@ describe('Rule System Integration', () => {
         wedges: [
           { id: 'red-wedge', label: 'Red', weight: 1, color: '#ff0000' },
           { id: 'black-wedge', label: 'Black', weight: 1, color: '#000000' },
-          { id: 'green-wedge', label: 'Green', weight: 1, color: '#00ff00' }
+          { id: 'green-wedge', label: 'Green', weight: 1, color: '#00ff00' },
         ],
         frictionCoefficient: 0.1,
         radius: 150,
         position: { x: 200, y: 200 },
         currentAngle: 0,
-        angularVelocity: 0
+        angularVelocity: 0,
       },
       {
         id: 'inner-wheel',
         label: 'Inner Wheel',
         wedges: [
           { id: 'blue-wedge', label: 'Blue', weight: 1, color: '#0000ff' },
-          { id: 'yellow-wedge', label: 'Yellow', weight: 1, color: '#ffff00' }
+          { id: 'yellow-wedge', label: 'Yellow', weight: 1, color: '#ffff00' },
         ],
         frictionCoefficient: 0.1,
         clutchRatio: 0.5,
         radius: 75,
         position: { x: 200, y: 200 },
         currentAngle: 0,
-        angularVelocity: 0
-      }
+        angularVelocity: 0,
+      },
     ];
   }
 
@@ -488,7 +488,7 @@ describe('Rule System Integration', () => {
       wheels: mockWheels,
       players: [
         { id: 'player1', name: 'Player 1', isActive: true },
-        { id: 'player2', name: 'Player 2', isActive: false }
+        { id: 'player2', name: 'Player 2', isActive: false },
       ],
       currentPlayerIndex: 0,
       gamePhase: 'playing',
@@ -497,8 +497,8 @@ describe('Rule System Integration', () => {
         maxPlayers: 4,
         enableSound: true,
         theme: 'default',
-        deterministic: false
-      }
+        deterministic: false,
+      },
     };
   }
 });

@@ -10,14 +10,14 @@ Object.defineProperty(document, 'createElement', {
   value: jest.fn(() => ({
     id: '',
     textContent: '',
-    remove: jest.fn()
-  }))
+    remove: jest.fn(),
+  })),
 });
 
 Object.defineProperty(document, 'head', {
   value: {
-    appendChild: jest.fn()
-  }
+    appendChild: jest.fn(),
+  },
 });
 
 Object.defineProperty(document, 'body', {
@@ -25,9 +25,9 @@ Object.defineProperty(document, 'body', {
     className: '',
     classList: {
       add: jest.fn(),
-      remove: jest.fn()
-    }
-  }
+      remove: jest.fn(),
+    },
+  },
 });
 
 describe('ThemeEngine', () => {
@@ -53,7 +53,7 @@ describe('ThemeEngine', () => {
         success: '#00aa00',
         warning: '#ffaa00',
         error: '#aa0000',
-        info: '#0000aa'
+        info: '#0000aa',
       },
       typography: {
         fontFamily: 'Arial, sans-serif',
@@ -64,20 +64,20 @@ describe('ThemeEngine', () => {
           lg: '1.125rem',
           xl: '1.25rem',
           '2xl': '1.5rem',
-          '3xl': '1.875rem'
+          '3xl': '1.875rem',
         },
         fontWeight: {
           light: 300,
           normal: 400,
           medium: 500,
           semibold: 600,
-          bold: 700
+          bold: 700,
         },
         lineHeight: {
           tight: 1.25,
           normal: 1.5,
-          relaxed: 1.75
-        }
+          relaxed: 1.75,
+        },
       },
       spacing: {
         xs: '0.25rem',
@@ -86,7 +86,7 @@ describe('ThemeEngine', () => {
         lg: '1.5rem',
         xl: '2rem',
         '2xl': '3rem',
-        '3xl': '4rem'
+        '3xl': '4rem',
       },
       borderRadius: {
         none: '0',
@@ -94,27 +94,27 @@ describe('ThemeEngine', () => {
         md: '0.375rem',
         lg: '0.5rem',
         xl: '0.75rem',
-        full: '9999px'
+        full: '9999px',
       },
       shadows: {
         sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
         lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
       },
       animations: {
         duration: {
           fast: '150ms',
           normal: '300ms',
-          slow: '500ms'
+          slow: '500ms',
         },
         easing: {
           linear: 'linear',
           easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
           easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-          easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)'
-        }
-      }
+          easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        },
+      },
     };
 
     themeEngine = new ThemeEngine();
@@ -139,7 +139,7 @@ describe('ThemeEngine', () => {
         currentThemeId: 'dark',
         customThemes: [mockCustomTheme],
         enableAnimations: false,
-        reducedMotion: true
+        reducedMotion: true,
       };
 
       const customThemeEngine = new ThemeEngine(customConfig);
@@ -291,7 +291,7 @@ describe('ThemeEngine', () => {
     it('should generate CSS variables for theme', () => {
       const mockStyleElement = {
         textContent: '',
-        remove: jest.fn()
+        remove: jest.fn(),
       };
       themeEngine['styleElement'] = mockStyleElement as any;
       
@@ -305,7 +305,7 @@ describe('ThemeEngine', () => {
     it('should generate component styles', () => {
       const mockStyleElement = {
         textContent: '',
-        remove: jest.fn()
+        remove: jest.fn(),
       };
       themeEngine['styleElement'] = mockStyleElement as any;
       
@@ -319,7 +319,7 @@ describe('ThemeEngine', () => {
     it('should include utility classes', () => {
       const mockStyleElement = {
         textContent: '',
-        remove: jest.fn()
+        remove: jest.fn(),
       };
       themeEngine['styleElement'] = mockStyleElement as any;
       
@@ -445,7 +445,7 @@ describe('ThemeEngine', () => {
   describe('Cleanup', () => {
     it('should remove style element when disposing', () => {
       const mockStyleElement = {
-        remove: jest.fn()
+        remove: jest.fn(),
       };
       themeEngine['styleElement'] = mockStyleElement as any;
       
@@ -483,7 +483,7 @@ describe('ThemeEngine', () => {
       const invalidTheme = {
         id: 'invalid',
         name: 'Invalid',
-        colors: 'not an object' // Invalid structure
+        colors: 'not an object', // Invalid structure
       };
       
       const result = themeEngine['validateTheme'](invalidTheme);

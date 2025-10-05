@@ -29,7 +29,7 @@ export class MediaViewer {
       showControls: options.showControls ?? true,
       autoplay: options.autoplay ?? false,
       fallbackText: options.fallbackText ?? 'Media not available',
-      className: options.className ?? 'media-viewer'
+      className: options.className ?? 'media-viewer',
     };
 
     this.setupContainer();
@@ -219,7 +219,7 @@ export class MediaViewer {
  */
 export function createMediaViewer(
   container: HTMLElement, 
-  options?: MediaViewerOptions
+  options?: MediaViewerOptions,
 ): MediaViewer {
   return new MediaViewer(container, options);
 }
@@ -230,7 +230,7 @@ export function createMediaViewer(
 export async function displayMediaTemporary(
   media: WedgeMedia,
   parentElement: HTMLElement,
-  options?: MediaViewerOptions & { duration?: number }
+  options?: MediaViewerOptions & { duration?: number },
 ): Promise<void> {
   const container = document.createElement('div');
   parentElement.appendChild(container);

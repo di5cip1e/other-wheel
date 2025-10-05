@@ -60,14 +60,14 @@ export class WheelEditor {
         { id: 'wedge-1', label: 'Option 1', weight: 1, color: '#ff6b6b' },
         { id: 'wedge-2', label: 'Option 2', weight: 1, color: '#4ecdc4' },
         { id: 'wedge-3', label: 'Option 3', weight: 1, color: '#45b7d1' },
-        { id: 'wedge-4', label: 'Option 4', weight: 1, color: '#96ceb4' }
+        { id: 'wedge-4', label: 'Option 4', weight: 1, color: '#96ceb4' },
       ],
       frictionCoefficient: 0.02,
       clutchRatio: 0.8,
       radius: 150,
       position: { x: 0, y: 0 },
       currentAngle: 0,
-      angularVelocity: 0
+      angularVelocity: 0,
     };
   }
 
@@ -167,7 +167,7 @@ export class WheelEditor {
       (value) => {
         this.wheel.frictionCoefficient = value;
         this.triggerWheelUpdate();
-      }
+      },
     );
     
     const clutchContainer = this.createNumberInput(
@@ -179,7 +179,7 @@ export class WheelEditor {
       (value) => {
         this.wheel.clutchRatio = value;
         this.triggerWheelUpdate();
-      }
+      },
     );
     
     this.advancedContainer.appendChild(title);
@@ -250,7 +250,7 @@ export class WheelEditor {
       (value) => {
         wedge.label = value;
         this.triggerWedgeUpdate(wedge);
-      }
+      },
     );
     
     // Weight input
@@ -263,7 +263,7 @@ export class WheelEditor {
       (value) => {
         wedge.weight = value;
         this.triggerWedgeUpdate(wedge);
-      }
+      },
     );
     
     // Color input
@@ -273,7 +273,7 @@ export class WheelEditor {
       (value) => {
         wedge.color = value;
         this.triggerWedgeUpdate(wedge);
-      }
+      },
     );
     
     content.appendChild(labelContainer);
@@ -322,7 +322,7 @@ export class WheelEditor {
     min: number, 
     max: number, 
     step: number, 
-    onChange: (value: number) => void
+    onChange: (value: number) => void,
   ): HTMLElement {
     const container = document.createElement('div');
     container.className = 'input-container';
@@ -384,7 +384,7 @@ export class WheelEditor {
       id: 'wedge-' + Date.now(),
       label: `Option ${this.wheel.wedges.length + 1}`,
       weight: 1,
-      color: this.generateRandomColor()
+      color: this.generateRandomColor(),
     };
     
     this.wheel.wedges.push(newWedge);
@@ -419,7 +419,7 @@ export class WheelEditor {
   private generateRandomColor(): string {
     const colors = [
       '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', 
-      '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43'
+      '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43',
     ];
     return colors[Math.floor(Math.random() * colors.length)] || '#cccccc';
   }
@@ -467,7 +467,7 @@ export class WheelEditor {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -490,7 +490,7 @@ export class WheelEditor {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -527,24 +527,24 @@ export class WheelEditor {
       const weightValidation = this.validateWedgeWeight(wedge.weight);
       
       labelValidation.errors.forEach(error => 
-        errors.push(`Wedge ${index + 1}: ${error}`)
+        errors.push(`Wedge ${index + 1}: ${error}`),
       );
       weightValidation.errors.forEach(error => 
-        errors.push(`Wedge ${index + 1}: ${error}`)
+        errors.push(`Wedge ${index + 1}: ${error}`),
       );
       
       labelValidation.warnings.forEach(warning => 
-        warnings.push(`Wedge ${index + 1}: ${warning}`)
+        warnings.push(`Wedge ${index + 1}: ${warning}`),
       );
       weightValidation.warnings.forEach(warning => 
-        warnings.push(`Wedge ${index + 1}: ${warning}`)
+        warnings.push(`Wedge ${index + 1}: ${warning}`),
       );
     });
     
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -568,7 +568,7 @@ export class WheelEditor {
       id: wedge?.id || 'wedge-' + Date.now(),
       label: wedge?.label !== undefined ? wedge.label : `Option ${this.wheel.wedges.length + 1}`,
       weight: wedge?.weight !== undefined ? wedge.weight : 1,
-      color: wedge?.color || this.generateRandomColor()
+      color: wedge?.color || this.generateRandomColor(),
     };
     
     if (wedge?.media) {

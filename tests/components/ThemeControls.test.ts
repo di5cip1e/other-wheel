@@ -16,7 +16,7 @@ class MockAudioContext {
   createGain() {
     return {
       gain: { setValueAtTime: jest.fn() },
-      connect: jest.fn()
+      connect: jest.fn(),
     };
   }
 
@@ -27,7 +27,7 @@ class MockAudioContext {
       connect: jest.fn(),
       start: jest.fn(),
       stop: jest.fn(),
-      onended: null
+      onended: null,
     };
   }
 
@@ -47,8 +47,8 @@ class MockAudioContext {
 // Mock DOM
 global.fetch = jest.fn(() =>
   Promise.resolve({
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(1000))
-  })
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(1000)),
+  }),
 ) as jest.Mock;
 
 (global as any).AudioContext = MockAudioContext;
@@ -65,15 +65,15 @@ const mockElement = {
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
   dispatchEvent: jest.fn(),
-  click: jest.fn()
+  click: jest.fn(),
 };
 
 Object.defineProperty(document, 'createElement', {
-  value: jest.fn(() => mockElement)
+  value: jest.fn(() => mockElement),
 });
 
 Object.defineProperty(document, 'head', {
-  value: { appendChild: jest.fn() }
+  value: { appendChild: jest.fn() },
 });
 
 Object.defineProperty(document, 'body', {
@@ -81,9 +81,9 @@ Object.defineProperty(document, 'body', {
     className: '',
     classList: {
       add: jest.fn(),
-      remove: jest.fn()
-    }
-  }
+      remove: jest.fn(),
+    },
+  },
 });
 
 describe('ThemeControls Basic', () => {
@@ -129,7 +129,7 @@ describe('ThemeControls Basic', () => {
         showThemeSelector: false,
         showAudioToggle: false,
         showAnimationToggle: false,
-        compact: true
+        compact: true,
       };
 
       const customControls = new ThemeControls(container, audioEngine, themeEngine, customConfig);
@@ -146,7 +146,7 @@ describe('ThemeControls Basic', () => {
     it('should update configuration', () => {
       const newConfig = {
         showVolumeControls: false,
-        compact: true
+        compact: true,
       };
 
       themeControls.updateConfig(newConfig);
@@ -174,8 +174,8 @@ describe('ThemeControls Basic', () => {
           resultReveal: { id: 'custom-reveal', name: 'Custom Reveal', url: '/custom/reveal.mp3' },
           buttonClick: { id: 'custom-click', name: 'Custom Click', url: '/custom/click.mp3' },
           gameStart: { id: 'custom-start', name: 'Custom Start', url: '/custom/start.mp3' },
-          gameEnd: { id: 'custom-end', name: 'Custom End', url: '/custom/end.mp3' }
-        }
+          gameEnd: { id: 'custom-end', name: 'Custom End', url: '/custom/end.mp3' },
+        },
       };
 
       expect(() => themeControls.addAudioTheme(customTheme)).not.toThrow();

@@ -41,9 +41,9 @@ export class WedgeProbabilityIndicator {
       severityThresholds: {
         low: 0.02,
         medium: 0.1,
-        high: 0.2
+        high: 0.2,
       },
-      ...config
+      ...config,
     };
   }
 
@@ -70,7 +70,7 @@ export class WedgeProbabilityIndicator {
           indicatorElement.parentNode.removeChild(indicatorElement);
         }
         this.indicators.delete(wedge.id);
-      }
+      },
     };
 
     // Initial content update

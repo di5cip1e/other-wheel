@@ -11,7 +11,7 @@ const mockContainer = {
   style: {} as CSSStyleDeclaration,
   appendChild: jest.fn(),
   remove: jest.fn(),
-  id: 'test-container'
+  id: 'test-container',
 } as unknown as HTMLElement;
 
 const mockWheel = {
@@ -19,15 +19,15 @@ const mockWheel = {
   style: {} as CSSStyleDeclaration,
   appendChild: jest.fn(),
   remove: jest.fn(),
-  id: 'test-wheel'
+  id: 'test-wheel',
 } as unknown as HTMLElement;
 
 // Mock document.getElementById
 const originalGetElementById = document.getElementById;
 beforeAll(() => {
   document.getElementById = jest.fn((id: string) => {
-    if (id === 'test-container') return mockContainer;
-    if (id === 'test-wheel') return mockWheel;
+    if (id === 'test-container') {return mockContainer;}
+    if (id === 'test-wheel') {return mockWheel;}
     return null;
   });
 });
@@ -46,7 +46,7 @@ beforeAll(() => {
       appendChild: jest.fn(),
       remove: jest.fn(),
       textContent: '',
-      id: ''
+      id: '',
     } as unknown as HTMLElement;
     return element;
   });
@@ -72,7 +72,7 @@ describe('WheelRenderer', () => {
 
     it('should throw error with invalid container', () => {
       expect(() => new WheelRenderer('invalid-container')).toThrow(
-        "Container element with id 'invalid-container' not found"
+        'Container element with id \'invalid-container\' not found',
       );
     });
   });
@@ -84,7 +84,7 @@ describe('WheelRenderer', () => {
         wedgeCount: 8,
         texts: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
         colors: ['#ff0000', '#00ff00', '#0000ff'],
-        radius: 200
+        radius: 200,
       };
 
       const wheel = wheelRenderer.createWheel(options);
@@ -98,7 +98,7 @@ describe('WheelRenderer', () => {
         wedgeCount: 8,
         texts: Array(8).fill('test'),
         colors: ['#ff0000'],
-        radius: 200
+        radius: 200,
       };
 
       const wheel = wheelRenderer.createWheel(options);
@@ -111,7 +111,7 @@ describe('WheelRenderer', () => {
         wedgeCount: 6,
         texts: Array(6).fill('test'),
         colors: ['#ff0000'],
-        radius: 100
+        radius: 100,
       };
 
       const wheel = wheelRenderer.createWheel(options);
@@ -154,7 +154,7 @@ describe('WheelRenderer', () => {
         wedgeCount: 4,
         texts: ['A', 'B', 'C', 'D'],
         colors: ['#ff0000'],
-        radius: 100
+        radius: 100,
       };
 
       wheelRenderer.createWheel(options);
@@ -173,7 +173,7 @@ describe('WheelRenderer', () => {
         wedgeCount: 4,
         texts: ['A', 'B', 'C', 'D'],
         colors: ['#ff0000'],
-        radius: 100
+        radius: 100,
       };
 
       wheelRenderer.createWheel(options);

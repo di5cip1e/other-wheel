@@ -21,21 +21,21 @@ const localStorageMock = (() => {
     },
     clear: () => {
       store = {};
-    }
+    },
   };
 })();
 
 Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 });
 
 // Mock URL methods for file download
 Object.defineProperty(window.URL, 'createObjectURL', {
-  value: jest.fn(() => 'mock-url')
+  value: jest.fn(() => 'mock-url'),
 });
 
 Object.defineProperty(window.URL, 'revokeObjectURL', {
-  value: jest.fn()
+  value: jest.fn(),
 });
 
 describe('Preset System Integration', () => {
@@ -57,7 +57,7 @@ describe('Preset System Integration', () => {
         id: 'wedge1',
         label: 'Red Option',
         weight: 1,
-        color: '#ff0000'
+        color: '#ff0000',
       },
       {
         id: 'wedge2',
@@ -67,8 +67,8 @@ describe('Preset System Integration', () => {
         media: {
           type: 'image',
           src: 'blue-option.jpg',
-          alt: 'Blue option image'
-        }
+          alt: 'Blue option image',
+        },
       },
       {
         id: 'wedge3',
@@ -77,9 +77,9 @@ describe('Preset System Integration', () => {
         color: '#00ff00',
         media: {
           type: 'video',
-          src: 'green-option.mp4'
-        }
-      }
+          src: 'green-option.mp4',
+        },
+      },
     ];
 
     const mockWheels: Wheel[] = [
@@ -91,7 +91,7 @@ describe('Preset System Integration', () => {
         radius: 250,
         position: { x: 400, y: 400 },
         currentAngle: 0,
-        angularVelocity: 0
+        angularVelocity: 0,
       },
       {
         id: 'inner-wheel',
@@ -102,8 +102,8 @@ describe('Preset System Integration', () => {
         radius: 120,
         position: { x: 400, y: 400 },
         currentAngle: 0,
-        angularVelocity: 0
-      }
+        angularVelocity: 0,
+      },
     ];
 
     const mockSettings: GameSettings = {
@@ -113,22 +113,22 @@ describe('Preset System Integration', () => {
       enableSound: true,
       theme: 'neon',
       deterministic: true,
-      rngSeed: 12345
+      rngSeed: 12345,
     };
 
     mockGameState = {
       wheels: mockWheels,
       players: [
         { id: 'player1', name: 'Alice', isActive: true },
-        { id: 'player2', name: 'Bob', isActive: false }
+        { id: 'player2', name: 'Bob', isActive: false },
       ],
       currentPlayerIndex: 0,
       gamePhase: 'playing',
       scores: new Map([
         ['player1', 25],
-        ['player2', 15]
+        ['player2', 15],
       ]),
-      settings: mockSettings
+      settings: mockSettings,
     };
   });
 
@@ -142,7 +142,7 @@ describe('Preset System Integration', () => {
       const originalPreset = presetManager.createPresetFromGameState(
         mockGameState,
         'Integration Test Preset',
-        'A comprehensive test preset with multiple wheels and media'
+        'A comprehensive test preset with multiple wheels and media',
       );
 
       // Enhance the preset with custom metadata
@@ -256,7 +256,7 @@ describe('Preset System Integration', () => {
         onPresetLoad: (preset) => { loadedPreset = preset; },
         onPresetSave: (data) => { savedPresetData = data; },
         onPresetDelete: (id) => { deletedPresetId = id; },
-        onError: (error) => { errorMessage = error; }
+        onError: (error) => { errorMessage = error; },
       });
 
       // Wait for initialization
@@ -268,7 +268,7 @@ describe('Preset System Integration', () => {
       expect(presetItems).toHaveLength(2);
 
       const presetNames = Array.from(presetItems).map(item => 
-        item.querySelector('.preset-name')?.textContent
+        item.querySelector('.preset-name')?.textContent,
       );
       expect(presetNames).toContain('Test Preset 1');
       expect(presetNames).toContain('Advanced Preset');
@@ -348,7 +348,7 @@ describe('Preset System Integration', () => {
         name: 'New Integration Preset',
         description: 'Created through integration test',
         tags: ['integration', 'new', 'test'],
-        difficulty: 'medium'
+        difficulty: 'medium',
       });
     });
 
@@ -361,7 +361,7 @@ describe('Preset System Integration', () => {
       const mockLink = {
         href: '',
         download: '',
-        click: jest.fn()
+        click: jest.fn(),
       };
       document.createElement = jest.fn().mockReturnValue(mockLink);
       document.body.appendChild = jest.fn();
@@ -449,15 +449,15 @@ describe('Preset System Integration', () => {
             maxPlayers: -1, // Invalid: negative players
             enableSound: 'yes', // Invalid: should be boolean
             theme: 'default',
-            deterministic: false
-          }
+            deterministic: false,
+          },
         },
         metadata: {
           tags: 'not-an-array', // Invalid: should be array
           difficulty: 'impossible', // Invalid: not in allowed values
           playerCount: { min: 1, max: 4 },
-          estimatedDuration: 15
-        }
+          estimatedDuration: 15,
+        },
       };
 
       expect(() => presetManager.importPreset(JSON.stringify(invalidPresetData)))
@@ -492,7 +492,7 @@ describe('Preset System Integration', () => {
         const preset = presetManager.createPresetFromGameState(
           mockGameState,
           `Performance Test Preset ${i}`,
-          `Preset number ${i} for performance testing`
+          `Preset number ${i} for performance testing`,
         );
         preset.metadata.tags = [`tag${i % 10}`, 'performance', 'test'];
         savePromises.push(presetManager.savePreset(preset));
@@ -524,8 +524,8 @@ describe('Preset System Integration', () => {
           media: {
             type: 'image',
             src: `https://example.com/very-long-url-that-represents-a-large-image-file-${i}.jpg`,
-            alt: `Alternative text for image ${i} that is also quite long and descriptive`
-          }
+            alt: `Alternative text for image ${i} that is also quite long and descriptive`,
+          },
         });
       }
 
@@ -540,20 +540,20 @@ describe('Preset System Integration', () => {
           radius: 100 + (i * 20),
           position: { x: 300 + (i * 10), y: 300 + (i * 10) },
           currentAngle: 0,
-          angularVelocity: 0
+          angularVelocity: 0,
         });
       }
 
       const largeGameState: GameState = {
         ...mockGameState,
-        wheels: largeWheels
+        wheels: largeWheels,
       };
 
       const startTime = Date.now();
       const preset = presetManager.createPresetFromGameState(
         largeGameState,
         'Large Data Preset',
-        'A preset with lots of wheels and wedges to test performance'
+        'A preset with lots of wheels and wedges to test performance',
       );
 
       await presetManager.savePreset(preset);

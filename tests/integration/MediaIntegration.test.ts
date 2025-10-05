@@ -63,7 +63,7 @@ const mockDOM = () => {
         min: '',
         max: '',
         step: '',
-        placeholder: ''
+        placeholder: '',
       };
       
       elements.set(tagName, element);
@@ -80,9 +80,9 @@ const mockDOM = () => {
         querySelector: jest.fn(),
         insertBefore: jest.fn(),
         parentElement: null,
-        firstChild: null
+        firstChild: null,
       };
-    })
+    }),
   };
 
   (global as any).Image = class MockImage {
@@ -98,9 +98,9 @@ const mockDOM = () => {
       setTimeout(() => {
         if (this.src && !this.src.includes('invalid')) {
           this.complete = true;
-          if (this.onload) this.onload();
+          if (this.onload) {this.onload();}
         } else {
-          if (this.onerror) this.onerror();
+          if (this.onerror) {this.onerror();}
         }
       }, 10);
     }
@@ -114,10 +114,10 @@ const mockDOM = () => {
     readAsDataURL(file: File): void {
       setTimeout(() => {
         if (file.name.includes('invalid')) {
-          if (this.onerror) this.onerror();
+          if (this.onerror) {this.onerror();}
         } else {
           this.result = `data:${file.type};base64,mockbase64data`;
-          if (this.onload) this.onload({ target: this });
+          if (this.onload) {this.onload({ target: this });}
         }
       }, 5);
     }
@@ -149,7 +149,7 @@ describe('Media Integration Tests', () => {
       const media: WedgeMedia = {
         type: 'image',
         src: 'https://example.com/integration-test.jpg',
-        alt: 'Integration test image'
+        alt: 'Integration test image',
       };
 
       await mediaViewer.displayMedia(media);
@@ -166,7 +166,7 @@ describe('Media Integration Tests', () => {
 
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/invalid-integration.jpg'
+        src: 'https://example.com/invalid-integration.jpg',
       };
 
       await mediaViewer.displayMedia(media);
@@ -184,7 +184,7 @@ describe('Media Integration Tests', () => {
 
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/cache-test.jpg'
+        src: 'https://example.com/cache-test.jpg',
       };
 
       // Load in first viewer
@@ -205,13 +205,13 @@ describe('Media Integration Tests', () => {
     test('should validate media in editor', async () => {
       const wedgeEditor = new WedgeEditor({
         containerId: 'test-container',
-        showMediaOptions: true
+        showMediaOptions: true,
       });
 
       const media: WedgeMedia = {
         type: 'image',
         src: 'https://example.com/editor-test.jpg',
-        alt: 'Editor test'
+        alt: 'Editor test',
       };
 
       const validation = await wedgeEditor.validateMedia(media);
@@ -221,7 +221,7 @@ describe('Media Integration Tests', () => {
     test('should get supported media types from editor', () => {
       const wedgeEditor = new WedgeEditor({
         containerId: 'test-container',
-        showMediaOptions: true
+        showMediaOptions: true,
       });
 
       const types = wedgeEditor.getSupportedMediaTypes();
@@ -232,7 +232,7 @@ describe('Media Integration Tests', () => {
     test('should handle file upload in editor', async () => {
       const wedgeEditor = new WedgeEditor({
         containerId: 'test-container',
-        showMediaOptions: true
+        showMediaOptions: true,
       });
 
       const file = new File(['test-data'], 'test.jpg', { type: 'image/jpeg' });
@@ -242,7 +242,7 @@ describe('Media Integration Tests', () => {
       fileInput.type = 'file';
       Object.defineProperty(fileInput, 'files', {
         value: [file],
-        writable: false
+        writable: false,
       });
 
       // This would normally be triggered by user interaction
@@ -282,8 +282,8 @@ describe('Media Integration Tests', () => {
         media: {
           type: 'image',
           src: 'https://example.com/wedge-image.jpg',
-          alt: 'Wedge image'
-        }
+          alt: 'Wedge image',
+        },
       };
 
       // 1. Validate wedge media
@@ -307,7 +307,7 @@ describe('Media Integration Tests', () => {
     test('should handle media errors gracefully throughout pipeline', async () => {
       const invalidMedia: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/invalid-pipeline.jpg'
+        src: 'https://example.com/invalid-pipeline.jpg',
       };
 
       // 1. Validation should pass (URL format is valid)
@@ -338,7 +338,7 @@ describe('Media Integration Tests', () => {
         medias.push({
           type: 'image',
           src: `https://example.com/perf-test-${i}.jpg`,
-          alt: `Performance test ${i}`
+          alt: `Performance test ${i}`,
         });
       }
 
@@ -361,12 +361,12 @@ describe('Media Integration Tests', () => {
     test('should handle concurrent media loading efficiently', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/concurrent-integration.jpg'
+        src: 'https://example.com/concurrent-integration.jpg',
       };
 
       // Start multiple loads simultaneously
       const promises = Array(5).fill(null).map(() => 
-        mediaManager.loadMedia(media)
+        mediaManager.loadMedia(media),
       );
 
       const results = await Promise.all(promises);
@@ -385,13 +385,13 @@ describe('Media Integration Tests', () => {
     test('should recover from media loading failures', async () => {
       const container = document.createElement('div');
       const viewer = new MediaViewer(container, {
-        fallbackText: 'Custom fallback message'
+        fallbackText: 'Custom fallback message',
       });
 
       // Try to load invalid media
       const invalidMedia: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/recovery-test-invalid.jpg'
+        src: 'https://example.com/recovery-test-invalid.jpg',
       };
 
       await viewer.displayMedia(invalidMedia);
@@ -400,7 +400,7 @@ describe('Media Integration Tests', () => {
       // Now load valid media
       const validMedia: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/recovery-test-valid.jpg'
+        src: 'https://example.com/recovery-test-valid.jpg',
       };
 
       await viewer.displayMedia(validMedia);
@@ -431,7 +431,7 @@ describe('Media Integration Tests', () => {
       const media: WedgeMedia = {
         type: 'image',
         src: 'https://example.com/alt-test.jpg',
-        alt: 'Accessibility test image'
+        alt: 'Accessibility test image',
       };
 
       const loadResult = await mediaManager.loadMedia(media);
@@ -445,13 +445,13 @@ describe('Media Integration Tests', () => {
     test('should handle video accessibility features', async () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/accessibility-video.mp4'
+        src: 'https://example.com/accessibility-video.mp4',
       };
 
       const container = document.createElement('div');
       const viewer = new MediaViewer(container, {
         showControls: true,
-        autoplay: false // Better for accessibility
+        autoplay: false, // Better for accessibility
       });
 
       await viewer.displayMedia(media);
@@ -464,7 +464,7 @@ describe('Media Integration Tests', () => {
 
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/loading-feedback.jpg'
+        src: 'https://example.com/loading-feedback.jpg',
       };
 
       // Start loading (don't await immediately)

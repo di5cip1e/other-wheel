@@ -11,24 +11,24 @@ jest.mock('../../src/components/WheelRenderer', () => ({
     createWheel: jest.fn(),
     updateWheelRotation: jest.fn(),
     determineWedgeResult: jest.fn(() => ({ index: 0, text: 'Test Result' })),
-    clearWheels: jest.fn()
-  }))
+    clearWheels: jest.fn(),
+  })),
 }));
 
 jest.mock('../../src/components/PowerMeter', () => ({
   PowerMeter: jest.fn().mockImplementation((_options: any, callbacks: any) => ({
     resetMeter: jest.fn(),
     destroy: jest.fn(),
-    callbacks // Store callbacks for testing
-  }))
+    callbacks, // Store callbacks for testing
+  })),
 }));
 
 jest.mock('../../src/components/WheelEditor', () => ({
   WheelEditor: jest.fn().mockImplementation((_options: any, callbacks: any) => ({
     destroy: jest.fn(),
     callbacks, // Store callbacks for testing
-    options: _options
-  }))
+    options: _options,
+  })),
 }));
 
 // Mock DOM elements
@@ -48,7 +48,7 @@ beforeAll(() => {
         style: {} as CSSStyleDeclaration,
         textContent: '',
         appendChild: jest.fn(),
-        id
+        id,
       } as unknown as HTMLElement);
     }
     return mockElements.get(id) || null;
@@ -89,7 +89,7 @@ describe('GameController', () => {
     powerMeterContainerId: 'power-meter-container',
     bigWheelEditorContainerId: 'big-wheel-editor',
     smallWheelEditorContainerId: 'small-wheel-editor',
-    outputElementId: 'output'
+    outputElementId: 'output',
   };
 
   beforeEach(() => {
@@ -114,8 +114,8 @@ describe('GameController', () => {
     it('should throw error with invalid output element', () => {
       expect(() => new GameController({
         ...mockOptions,
-        outputElementId: 'invalid-output'
-      })).toThrow("Output element with id 'invalid-output' not found");
+        outputElementId: 'invalid-output',
+      })).toThrow('Output element with id \'invalid-output\' not found');
     });
   });
 
@@ -187,13 +187,13 @@ describe('GameController', () => {
           id: `wedge-${index}`,
           label: text,
           weight: newWeights[index] || 1,
-          color: '#ff0000'
+          color: '#ff0000',
         })),
         frictionCoefficient: 0.02,
         radius: 150,
         position: { x: 0, y: 0 },
         currentAngle: 0,
-        angularVelocity: 0
+        angularVelocity: 0,
       };
       
       if (bigWheelEditorInstance.callbacks && bigWheelEditorInstance.callbacks.onWheelUpdate) {
@@ -220,14 +220,14 @@ describe('GameController', () => {
           id: `small-wedge-${index}`,
           label: text,
           weight: newWeights[index] || 1,
-          color: '#00ff00'
+          color: '#00ff00',
         })),
         frictionCoefficient: 0.02,
         clutchRatio: 0.8,
         radius: 100,
         position: { x: 0, y: 0 },
         currentAngle: 0,
-        angularVelocity: 0
+        angularVelocity: 0,
       };
       
       if (smallWheelEditorInstance.callbacks && smallWheelEditorInstance.callbacks.onWheelUpdate) {
@@ -351,13 +351,13 @@ describe('GameController', () => {
           id: `weight-wedge-${index}`,
           label: text,
           weight: newWeights[index] || 1,
-          color: '#0000ff'
+          color: '#0000ff',
         })),
         frictionCoefficient: 0.02,
         radius: 150,
         position: { x: 0, y: 0 },
         currentAngle: 0,
-        angularVelocity: 0
+        angularVelocity: 0,
       };
       
       if (bigWheelEditorInstance.callbacks && bigWheelEditorInstance.callbacks.onWheelUpdate) {

@@ -1,6 +1,6 @@
-import { Rule, RuleCondition, RuleConditionType, RuleValidationError, RuleConflict } from '../models/Rule';
+import { Rule, RuleCondition, RuleConditionType } from '../models/Rule';
 import { RuleEngine } from '../engines/RuleEngine';
-import { Wheel, Wedge } from '../models';
+import { Wheel } from '../models';
 
 /**
  * RuleEditor provides UI for creating and editing game rules
@@ -57,7 +57,7 @@ export class RuleEditor {
       points: 0,
       message: '',
       createdAt: new Date().toISOString(),
-      modifiedAt: new Date().toISOString()
+      modifiedAt: new Date().toISOString(),
     };
     this.render();
   }
@@ -125,7 +125,7 @@ export class RuleEditor {
    * Render the rule editing form
    */
   private renderRuleForm(): string {
-    if (!this.currentRule) return '';
+    if (!this.currentRule) {return '';}
 
     return `
       <div class="rule-form">
@@ -232,17 +232,17 @@ export class RuleEditor {
    */
   private renderConditionDetails(condition: RuleCondition, index: number): string {
     switch (condition.type) {
-      case 'specific_wedge':
-      case 'avoid_wedge':
-        return this.renderWedgeCondition(condition, index);
-      case 'wedge_combination':
-        return this.renderCombinationCondition(condition, index);
-      case 'score_threshold':
-        return this.renderScoreCondition(condition, index);
-      case 'consecutive_wins':
-        return this.renderConsecutiveCondition(condition, index);
-      default:
-        return '<div>Unknown condition type</div>';
+    case 'specific_wedge':
+    case 'avoid_wedge':
+      return this.renderWedgeCondition(condition, index);
+    case 'wedge_combination':
+      return this.renderCombinationCondition(condition, index);
+    case 'score_threshold':
+      return this.renderScoreCondition(condition, index);
+    case 'consecutive_wins':
+      return this.renderConsecutiveCondition(condition, index);
+    default:
+      return '<div>Unknown condition type</div>';
     }
   }
 
@@ -255,16 +255,16 @@ export class RuleEditor {
         <div class="form-group">
           <label>Wheel:</label>
           <select class="condition-param" data-condition-index="${index}" data-param="wheel">
-            <option value="outer" ${condition.parameters.wheel === 'outer' ? 'selected' : ''}>Outer Wheel</option>
-            <option value="inner" ${condition.parameters.wheel === 'inner' ? 'selected' : ''}>Inner Wheel</option>
-            <option value="both" ${condition.parameters.wheel === 'both' ? 'selected' : ''}>Either Wheel</option>
+            <option value="outer" ${condition.parameters['wheel'] === 'outer' ? 'selected' : ''}>Outer Wheel</option>
+            <option value="inner" ${condition.parameters['wheel'] === 'inner' ? 'selected' : ''}>Inner Wheel</option>
+            <option value="both" ${condition.parameters['wheel'] === 'both' ? 'selected' : ''}>Either Wheel</option>
           </select>
         </div>
         <div class="form-group">
           <label>Wedge:</label>
           <select class="condition-param" data-condition-index="${index}" data-param="wedgeId">
             <option value="">Select a wedge...</option>
-            ${this.renderWedgeOptions(condition.parameters.wedgeId)}
+            ${this.renderWedgeOptions(condition.parameters['wedgeId'])}
           </select>
         </div>
       </div>
@@ -281,21 +281,21 @@ export class RuleEditor {
           <label>Outer Wheel Wedge:</label>
           <select class="condition-param" data-condition-index="${index}" data-param="outerWedgeId">
             <option value="">Select outer wedge...</option>
-            ${this.renderWedgeOptions(condition.parameters.outerWedgeId)}
+            ${this.renderWedgeOptions(condition.parameters['outerWedgeId'])}
           </select>
         </div>
         <div class="form-group">
           <label>Inner Wheel Wedge:</label>
           <select class="condition-param" data-condition-index="${index}" data-param="innerWedgeId">
             <option value="">Select inner wedge...</option>
-            ${this.renderWedgeOptions(condition.parameters.innerWedgeId)}
+            ${this.renderWedgeOptions(condition.parameters['innerWedgeId'])}
           </select>
         </div>
         <div class="form-group">
           <label>Match Type:</label>
           <select class="condition-param" data-condition-index="${index}" data-param="matchType">
-            <option value="exact" ${condition.parameters.matchType === 'exact' ? 'selected' : ''}>Exact Match (Both)</option>
-            <option value="any" ${condition.parameters.matchType === 'any' ? 'selected' : ''}>Any Match (Either)</option>
+            <option value="exact" ${condition.parameters['matchType'] === 'exact' ? 'selected' : ''}>Exact Match (Both)</option>
+            <option value="any" ${condition.parameters['matchType'] === 'any' ? 'selected' : ''}>Any Match (Either)</option>
           </select>
         </div>
       </div>
@@ -311,12 +311,12 @@ export class RuleEditor {
         <div class="form-group">
           <label>Score:</label>
           <select class="condition-param" data-condition-index="${index}" data-param="operator">
-            <option value="gte" ${condition.parameters.operator === 'gte' ? 'selected' : ''}>Greater than or equal to</option>
-            <option value="lte" ${condition.parameters.operator === 'lte' ? 'selected' : ''}>Less than or equal to</option>
-            <option value="eq" ${condition.parameters.operator === 'eq' ? 'selected' : ''}>Equal to</option>
+            <option value="gte" ${condition.parameters['operator'] === 'gte' ? 'selected' : ''}>Greater than or equal to</option>
+            <option value="lte" ${condition.parameters['operator'] === 'lte' ? 'selected' : ''}>Less than or equal to</option>
+            <option value="eq" ${condition.parameters['operator'] === 'eq' ? 'selected' : ''}>Equal to</option>
           </select>
           <input type="number" class="condition-param" data-condition-index="${index}" data-param="threshold" 
-                 value="${condition.parameters.threshold || 0}" />
+                 value="${condition.parameters['threshold'] || 0}" />
         </div>
       </div>
     `;
@@ -331,7 +331,7 @@ export class RuleEditor {
         <div class="form-group">
           <label>Number of consecutive wins:</label>
           <input type="number" min="1" class="condition-param" data-condition-index="${index}" data-param="count" 
-                 value="${condition.parameters.count || 1}" />
+                 value="${condition.parameters['count'] || 1}" />
         </div>
       </div>
     `;
@@ -358,12 +358,12 @@ export class RuleEditor {
    */
   private getConditionTypeLabel(type: RuleConditionType): string {
     switch (type) {
-      case 'specific_wedge': return 'Specific Wedge';
-      case 'wedge_combination': return 'Wedge Combination';
-      case 'score_threshold': return 'Score Threshold';
-      case 'consecutive_wins': return 'Consecutive Wins';
-      case 'avoid_wedge': return 'Avoid Wedge';
-      default: return type;
+    case 'specific_wedge': return 'Specific Wedge';
+    case 'wedge_combination': return 'Wedge Combination';
+    case 'score_threshold': return 'Score Threshold';
+    case 'consecutive_wins': return 'Consecutive Wins';
+    case 'avoid_wedge': return 'Avoid Wedge';
+    default: return type;
     }
   }
 
@@ -405,7 +405,7 @@ export class RuleEditor {
 
     // Remove condition buttons
     this.container.querySelectorAll('.remove-condition-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', () => {
         const index = parseInt(btn.getAttribute('data-condition-index') || '0');
         this.removeCondition(index);
       });
@@ -416,7 +416,7 @@ export class RuleEditor {
    * Attach form field listeners
    */
   private attachFormListeners(): void {
-    if (!this.currentRule) return;
+    if (!this.currentRule) {return;}
 
     // Basic form fields
     const nameInput = this.container.querySelector('#rule-name') as HTMLInputElement;
@@ -490,7 +490,7 @@ export class RuleEditor {
    * Update condition parameter
    */
   private updateConditionParameter(event: Event): void {
-    if (!this.currentRule) return;
+    if (!this.currentRule) {return;}
 
     const target = event.target as HTMLInputElement | HTMLSelectElement;
     const conditionIndex = parseInt(target.getAttribute('data-condition-index') || '0');
@@ -498,6 +498,8 @@ export class RuleEditor {
     
     if (conditionIndex < this.currentRule.conditions.length && paramName) {
       const condition = this.currentRule.conditions[conditionIndex];
+      if (!condition) {return;}
+      
       let value: any = target.value;
       
       // Convert numeric values
@@ -515,13 +517,16 @@ export class RuleEditor {
    * Update condition operator
    */
   private updateConditionOperator(event: Event): void {
-    if (!this.currentRule) return;
+    if (!this.currentRule) {return;}
 
     const target = event.target as HTMLSelectElement;
     const conditionIndex = parseInt(target.getAttribute('data-condition-index') || '0');
     
     if (conditionIndex < this.currentRule.conditions.length) {
-      this.currentRule.conditions[conditionIndex].operator = target.value as 'AND' | 'OR' | 'NOT';
+      const condition = this.currentRule.conditions[conditionIndex];
+      if (condition) {
+        condition.operator = target.value as 'AND' | 'OR' | 'NOT';
+      }
       this.currentRule.modifiedAt = new Date().toISOString();
     }
   }
@@ -535,7 +540,7 @@ export class RuleEditor {
       { value: 'wedge_combination', label: 'Wedge Combination', description: 'Trigger when specific combination of wedges is selected' },
       { value: 'score_threshold', label: 'Score Threshold', description: 'Trigger when player score reaches a threshold' },
       { value: 'consecutive_wins', label: 'Consecutive Wins', description: 'Trigger after consecutive winning spins' },
-      { value: 'avoid_wedge', label: 'Avoid Wedge', description: 'Trigger when player should avoid a specific wedge' }
+      { value: 'avoid_wedge', label: 'Avoid Wedge', description: 'Trigger when player should avoid a specific wedge' },
     ];
 
     const dialog = document.createElement('div');
@@ -580,14 +585,17 @@ export class RuleEditor {
    * Add a new condition
    */
   private addCondition(type: RuleConditionType): void {
-    if (!this.currentRule) return;
+    if (!this.currentRule) {return;}
 
     const newCondition: RuleCondition = {
       id: `condition_${Date.now()}`,
       type,
       parameters: this.getDefaultParameters(type),
-      operator: this.currentRule.conditions.length > 0 ? 'AND' : undefined
     };
+    
+    if (this.currentRule.conditions.length > 0) {
+      newCondition.operator = 'AND';
+    }
 
     this.currentRule.conditions.push(newCondition);
     this.currentRule.modifiedAt = new Date().toISOString();
@@ -599,17 +607,17 @@ export class RuleEditor {
    */
   private getDefaultParameters(type: RuleConditionType): Record<string, any> {
     switch (type) {
-      case 'specific_wedge':
-      case 'avoid_wedge':
-        return { wedgeId: '', wheel: 'outer' };
-      case 'wedge_combination':
-        return { outerWedgeId: '', innerWedgeId: '', matchType: 'exact' };
-      case 'score_threshold':
-        return { threshold: 100, operator: 'gte' };
-      case 'consecutive_wins':
-        return { count: 3 };
-      default:
-        return {};
+    case 'specific_wedge':
+    case 'avoid_wedge':
+      return { wedgeId: '', wheel: 'outer' };
+    case 'wedge_combination':
+      return { outerWedgeId: '', innerWedgeId: '', matchType: 'exact' };
+    case 'score_threshold':
+      return { threshold: 100, operator: 'gte' };
+    case 'consecutive_wins':
+      return { count: 3 };
+    default:
+      return {};
     }
   }
 
@@ -617,7 +625,7 @@ export class RuleEditor {
    * Remove a condition
    */
   private removeCondition(index: number): void {
-    if (!this.currentRule || index < 0 || index >= this.currentRule.conditions.length) return;
+    if (!this.currentRule || index < 0 || index >= this.currentRule.conditions.length) {return;}
 
     this.currentRule.conditions.splice(index, 1);
     this.currentRule.modifiedAt = new Date().toISOString();
@@ -628,7 +636,7 @@ export class RuleEditor {
    * Save the current rule
    */
   private saveCurrentRule(): void {
-    if (!this.currentRule) return;
+    if (!this.currentRule) {return;}
 
     try {
       if (this.ruleEngine.getRule(this.currentRule.id)) {
@@ -648,7 +656,7 @@ export class RuleEditor {
    * Delete the current rule
    */
   private deleteCurrentRule(): void {
-    if (!this.currentRule) return;
+    if (!this.currentRule) {return;}
 
     if (confirm(`Are you sure you want to delete the rule "${this.currentRule.name}"?`)) {
       this.ruleEngine.removeRule(this.currentRule.id);
@@ -663,7 +671,7 @@ export class RuleEditor {
    */
   private validateCurrentRule(): void {
     const errorsContainer = this.container.querySelector('#validation-errors');
-    if (!errorsContainer || !this.currentRule) return;
+    if (!errorsContainer || !this.currentRule) {return;}
 
     const errors = this.ruleEngine.validateRule(this.currentRule);
     
@@ -688,7 +696,7 @@ export class RuleEditor {
    */
   private checkForConflicts(): void {
     const conflictsContainer = this.container.querySelector('#rule-conflicts');
-    if (!conflictsContainer) return;
+    if (!conflictsContainer) {return;}
 
     const conflicts = this.ruleEngine.detectConflicts();
     

@@ -123,7 +123,7 @@ class WheelGameApp {
       const callbacks: GameControllerCallbacks = {
         onGameEnd: (winners: Player[]) => this.handleGameEnd(winners),
         onTurnComplete: (result: TurnResult) => this.handleTurnComplete(result),
-        onPlayerChange: (current: Player | null, previous: Player | null) => this.handlePlayerChange(current, previous)
+        onPlayerChange: (current: Player | null, previous: Player | null) => this.handlePlayerChange(current, previous),
       };
 
       // Initialize the game controller with all the extracted functionality
@@ -134,7 +134,7 @@ class WheelGameApp {
         smallWheelEditorContainerId: 'small-wheel-editor',
         outputElementId: 'output',
         playerUIContainerId: 'player-ui-container',
-        enableMultiplayer: false // Start in single player mode
+        enableMultiplayer: false, // Start in single player mode
       }, callbacks);
 
       // Setup UI event handlers
@@ -164,7 +164,7 @@ class WheelGameApp {
     
     addPlayerBtn?.addEventListener('click', () => this.addPlayer());
     playerNameInput?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') this.addPlayer();
+      if (e.key === 'Enter') {this.addPlayer();}
     });
 
     // Game controls
@@ -320,11 +320,11 @@ class WheelGameApp {
     const saveGameBtn = document.getElementById('save-game') as HTMLButtonElement;
     const loadGameBtn = document.getElementById('load-game') as HTMLButtonElement;
     
-    if (startGameBtn) startGameBtn.disabled = !isMultiplayer || players.length < 2;
-    if (endGameBtn) endGameBtn.disabled = !isMultiplayer || !hasPlayers;
-    if (resetGameBtn) resetGameBtn.disabled = !isMultiplayer || !hasPlayers;
-    if (saveGameBtn) saveGameBtn.disabled = !isMultiplayer || !hasPlayers;
-    if (loadGameBtn) loadGameBtn.disabled = !isMultiplayer;
+    if (startGameBtn) {startGameBtn.disabled = !isMultiplayer || players.length < 2;}
+    if (endGameBtn) {endGameBtn.disabled = !isMultiplayer || !hasPlayers;}
+    if (resetGameBtn) {resetGameBtn.disabled = !isMultiplayer || !hasPlayers;}
+    if (saveGameBtn) {saveGameBtn.disabled = !isMultiplayer || !hasPlayers;}
+    if (loadGameBtn) {loadGameBtn.disabled = !isMultiplayer;}
   }
 
   // Game event handlers
@@ -362,8 +362,8 @@ class WheelGameApp {
             showThemeSelector: true,
             showAudioToggle: true,
             showAnimationToggle: true,
-            compact: false
-          }
+            compact: false,
+          },
         );
       }
       
@@ -377,7 +377,7 @@ class WheelGameApp {
   }
 
   private setupAudioTriggers(): void {
-    if (!this.gameController) return;
+    if (!this.gameController) {return;}
 
     // Subscribe to game events and play appropriate sounds
     // Note: This would require the GameController to have event emitters

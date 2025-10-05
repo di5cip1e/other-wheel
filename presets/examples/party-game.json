@@ -1,0 +1,252 @@
+{
+  "id": "party-game",
+  "name": "Party Challenge Wheel",
+  "description": "Fun party game with challenges, dares, and group activities",
+  "version": "1.0.0",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "modifiedAt": "2024-01-01T00:00:00Z",
+  "author": "Wheel Game Team",
+  "gameConfig": {
+    "wheels": [
+      {
+        "id": "outer",
+        "label": "Challenge Type",
+        "wedges": [
+          {
+            "id": "dance",
+            "label": "💃 Dance Challenge",
+            "weight": 2,
+            "style": {
+              "fillColor": "#e74c3c",
+              "strokeColor": "#c0392b",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "sing",
+            "label": "🎤 Sing a Song",
+            "weight": 2,
+            "style": {
+              "fillColor": "#3498db",
+              "strokeColor": "#2980b9",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "trivia",
+            "label": "🧠 Trivia Question",
+            "weight": 3,
+            "style": {
+              "fillColor": "#2ecc71",
+              "strokeColor": "#27ae60",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "dare",
+            "label": "😈 Truth or Dare",
+            "weight": 2,
+            "style": {
+              "fillColor": "#9b59b6",
+              "strokeColor": "#8e44ad",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "mimic",
+            "label": "🎭 Impersonation",
+            "weight": 2,
+            "style": {
+              "fillColor": "#f39c12",
+              "strokeColor": "#e67e22",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "story",
+            "label": "📚 Tell a Story",
+            "weight": 2,
+            "style": {
+              "fillColor": "#1abc9c",
+              "strokeColor": "#16a085",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "group",
+            "label": "👥 Group Activity",
+            "weight": 1,
+            "style": {
+              "fillColor": "#34495e",
+              "strokeColor": "#2c3e50",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "skip",
+            "label": "😅 Skip Turn",
+            "weight": 1,
+            "style": {
+              "fillColor": "#95a5a6",
+              "strokeColor": "#7f8c8d",
+              "textColor": "#ffffff"
+            }
+          }
+        ],
+        "physicsProperties": {
+          "frictionCoefficient": 0.02,
+          "clutchRatio": 0,
+          "momentOfInertia": 1.2
+        },
+        "renderProperties": {
+          "radius": 220,
+          "strokeWidth": 3,
+          "showLabels": true,
+          "labelFont": "16px Comic Sans MS, cursive"
+        }
+      },
+      {
+        "id": "inner",
+        "label": "Difficulty",
+        "wedges": [
+          {
+            "id": "easy",
+            "label": "Easy",
+            "weight": 3,
+            "style": {
+              "fillColor": "#2ecc71",
+              "strokeColor": "#27ae60",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "medium",
+            "label": "Medium",
+            "weight": 2,
+            "style": {
+              "fillColor": "#f39c12",
+              "strokeColor": "#e67e22",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "hard",
+            "label": "Hard",
+            "weight": 1,
+            "style": {
+              "fillColor": "#e74c3c",
+              "strokeColor": "#c0392b",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "extreme",
+            "label": "EXTREME!",
+            "weight": 0.5,
+            "style": {
+              "fillColor": "#8e44ad",
+              "strokeColor": "#9b59b6",
+              "textColor": "#ffffff"
+            }
+          }
+        ],
+        "physicsProperties": {
+          "frictionCoefficient": 0.035,
+          "clutchRatio": 0.7,
+          "momentOfInertia": 0.4
+        },
+        "renderProperties": {
+          "radius": 90,
+          "strokeWidth": 2,
+          "showLabels": true,
+          "labelFont": "14px Comic Sans MS, cursive"
+        }
+      }
+    ],
+    "rules": [
+      {
+        "id": "extreme-challenge",
+        "name": "Extreme Challenge Bonus",
+        "type": "specific",
+        "conditions": [
+          {
+            "wheelId": "inner",
+            "wedgeId": "extreme"
+          }
+        ],
+        "outcome": {
+          "type": "bonus",
+          "message": "🔥 EXTREME CHALLENGE! Double points if completed! 🔥",
+          "scoreMultiplier": 2
+        }
+      },
+      {
+        "id": "group-activity-all",
+        "name": "Everyone Participates",
+        "type": "specific",
+        "conditions": [
+          {
+            "wheelId": "outer",
+            "wedgeId": "group"
+          }
+        ],
+        "outcome": {
+          "type": "group",
+          "message": "👥 Everyone joins in! All players participate!",
+          "action": "involve-all-players"
+        }
+      },
+      {
+        "id": "skip-turn-penalty",
+        "name": "Skip Turn",
+        "type": "specific",
+        "conditions": [
+          {
+            "wheelId": "outer",
+            "wedgeId": "skip"
+          }
+        ],
+        "outcome": {
+          "type": "skip",
+          "message": "😅 Lucky escape! But no points this round.",
+          "score": 0
+        }
+      }
+    ],
+    "settings": {
+      "maxPlayers": 8,
+      "roundLimit": 20,
+      "enableSound": true,
+      "theme": "party",
+      "deterministic": false
+    },
+    "theme": {
+      "name": "Party Time",
+      "colors": {
+        "primary": "#e74c3c",
+        "secondary": "#f39c12",
+        "background": "#2c3e50",
+        "text": "#ecf0f1"
+      },
+      "fonts": {
+        "primary": "Comic Sans MS, cursive",
+        "secondary": "Arial, sans-serif"
+      },
+      "effects": {
+        "sparkles": true,
+        "confetti": true,
+        "soundEffects": true,
+        "partyLights": true
+      }
+    }
+  },
+  "metadata": {
+    "tags": ["party", "social", "challenges", "multiplayer", "fun"],
+    "difficulty": "medium",
+    "playerCount": {
+      "min": 3,
+      "max": 8
+    },
+    "estimatedDuration": 30
+  }
+}

@@ -28,7 +28,7 @@ export class PlayerUI {
       showScores: true,
       showRoundInfo: true,
       maxPlayersDisplayed: 8,
-      ...config
+      ...config,
     };
 
     this.initialize();
@@ -128,7 +128,7 @@ export class PlayerUI {
    * Update current player display
    */
   private updateCurrentPlayer(): void {
-    if (!this.currentPlayerElement) return;
+    if (!this.currentPlayerElement) {return;}
 
     const currentPlayer = this.playerManager.getCurrentPlayer();
     
@@ -170,7 +170,7 @@ export class PlayerUI {
     // Turn indicator
     const turnIndicator = document.createElement('div');
     turnIndicator.className = 'turn-indicator';
-    turnIndicator.textContent = "It's your turn!";
+    turnIndicator.textContent = 'It\'s your turn!';
     playerCard.appendChild(turnIndicator);
 
     this.currentPlayerElement.innerHTML = '';
@@ -181,7 +181,7 @@ export class PlayerUI {
    * Update scoreboard display
    */
   private updateScoreboard(): void {
-    if (!this.scoreboardElement) return;
+    if (!this.scoreboardElement) {return;}
 
     const scores = this.playerManager.getPlayerScores();
     const players = this.playerManager.getPlayers();
@@ -201,7 +201,7 @@ export class PlayerUI {
 
     scores.slice(0, this.config.maxPlayersDisplayed).forEach((playerScore, index) => {
       const player = players.find(p => p.id === playerScore.playerId);
-      if (!player) return;
+      if (!player) {return;}
 
       const scoreItem = document.createElement('div');
       scoreItem.className = `score-item ${player.isActive ? 'active' : ''}`;
@@ -255,7 +255,7 @@ export class PlayerUI {
    * Update round info display
    */
   private updateRoundInfo(): void {
-    if (!this.roundInfoElement) return;
+    if (!this.roundInfoElement) {return;}
 
     const currentRound = this.playerManager.getCurrentRound();
     const totalPlayers = this.playerManager.getPlayers().length;
@@ -286,7 +286,7 @@ export class PlayerUI {
    * Show turn transition animation
    */
   showTurnTransition(_previousPlayer: Player | null, currentPlayer: Player | null): void {
-    if (!currentPlayer) return;
+    if (!currentPlayer) {return;}
 
     // Create transition overlay
     const overlay = document.createElement('div');
@@ -363,7 +363,7 @@ export class PlayerUI {
     const scores = this.playerManager.getPlayerScores();
     scores.forEach((playerScore, index) => {
       const player = this.playerManager.getPlayers().find(p => p.id === playerScore.playerId);
-      if (!player) return;
+      if (!player) {return;}
 
       const scoreItem = document.createElement('div');
       scoreItem.className = `final-score-item ${winners.includes(player) ? 'winner' : ''}`;

@@ -44,7 +44,7 @@ export class PresetBrowser {
       sortBy: 'modified',
       sortOrder: 'desc',
       showImportDialog: false,
-      showExportDialog: false
+      showExportDialog: false,
     };
 
     this.initialize();
@@ -305,7 +305,7 @@ export class PresetBrowser {
       filtered = filtered.filter(preset => 
         preset.name.toLowerCase().includes(query) ||
         (preset.description && preset.description.toLowerCase().includes(query)) ||
-        preset.metadata.tags.some(tag => tag.toLowerCase().includes(query))
+        preset.metadata.tags.some(tag => tag.toLowerCase().includes(query)),
       );
     }
     
@@ -314,15 +314,15 @@ export class PresetBrowser {
       let comparison = 0;
       
       switch (this.state.sortBy) {
-        case 'name':
-          comparison = a.name.localeCompare(b.name);
-          break;
-        case 'created':
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-          break;
-        case 'modified':
-          comparison = new Date(a.modifiedAt).getTime() - new Date(b.modifiedAt).getTime();
-          break;
+      case 'name':
+        comparison = a.name.localeCompare(b.name);
+        break;
+      case 'created':
+        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        break;
+      case 'modified':
+        comparison = new Date(a.modifiedAt).getTime() - new Date(b.modifiedAt).getTime();
+        break;
       }
       
       return this.state.sortOrder === 'desc' ? -comparison : comparison;
@@ -668,7 +668,7 @@ export class PresetBrowser {
           name,
           description: description || undefined,
           tags,
-          difficulty
+          difficulty,
         };
         
         this.options.onPresetSave(presetData as any);

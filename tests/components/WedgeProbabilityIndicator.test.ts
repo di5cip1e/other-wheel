@@ -18,17 +18,17 @@ const createMockElement = () => {
     removeChild: jest.fn(),
     classList: {
       remove: jest.fn(),
-      add: jest.fn()
+      add: jest.fn(),
     },
     parentNode: null as any,
-    id: ''
+    id: '',
   };
   
   // Allow parentNode to be set for testing
   Object.defineProperty(element, 'parentNode', {
     value: null,
     writable: true,
-    configurable: true
+    configurable: true,
   });
   
   return element;
@@ -37,7 +37,7 @@ const createMockElement = () => {
 const mockDocument = {
   createElement: jest.fn(),
   getElementById: jest.fn(),
-  head: { appendChild: jest.fn() }
+  head: { appendChild: jest.fn() },
 };
 
 // Setup DOM mocks
@@ -62,26 +62,26 @@ describe('WedgeProbabilityIndicator', () => {
         label: 'Low Weight',
         weight: 1,
         color: '#ff0000',
-        visualAngle: 120 // Mismatch: low weight, high visual
+        visualAngle: 120, // Mismatch: low weight, high visual
       },
       {
         id: 'wedge2',
         label: 'Medium Weight',
         weight: 3,
         color: '#00ff00',
-        visualAngle: 120 // Balanced
+        visualAngle: 120, // Balanced
       },
       {
         id: 'wedge3',
         label: 'High Weight',
         weight: 6,
         color: '#0000ff',
-        visualAngle: 120 // Mismatch: high weight, low visual
-      }
+        visualAngle: 120, // Mismatch: high weight, low visual
+      },
     ];
 
     mockContainer = {
-      appendChild: jest.fn()
+      appendChild: jest.fn(),
     } as any;
   });
 
@@ -95,7 +95,7 @@ describe('WedgeProbabilityIndicator', () => {
       const customConfig = {
         showPercentages: false,
         showRecommendations: false,
-        highlightMismatches: false
+        highlightMismatches: false,
       };
       
       const customIndicator = new WedgeProbabilityIndicator(customConfig);
@@ -195,7 +195,7 @@ describe('WedgeProbabilityIndicator', () => {
     it('should update configuration', () => {
       const newConfig = {
         showPercentages: false,
-        highlightMismatches: false
+        highlightMismatches: false,
       };
       
       indicator.updateConfig(newConfig);
@@ -279,7 +279,7 @@ describe('integration scenarios', () => {
   it('should handle wedges with extreme weight differences', () => {
     const extremeWedges: Wedge[] = [
       { id: 'rare', label: 'Rare', weight: 1, color: '#ff0000', visualAngle: 180 },
-      { id: 'common', label: 'Common', weight: 99, color: '#00ff00', visualAngle: 180 }
+      { id: 'common', label: 'Common', weight: 99, color: '#00ff00', visualAngle: 180 },
     ];
     
     const indicator1 = indicator.createIndicator(extremeWedges[0]!, extremeWedges, mockContainer);
@@ -292,7 +292,7 @@ describe('integration scenarios', () => {
   it('should handle wedges without visual angles', () => {
     const wedgesWithoutAngles: Wedge[] = [
       { id: 'wedge1', label: 'Wedge 1', weight: 1, color: '#ff0000' },
-      { id: 'wedge2', label: 'Wedge 2', weight: 2, color: '#00ff00' }
+      { id: 'wedge2', label: 'Wedge 2', weight: 2, color: '#00ff00' },
     ];
     
     const indicatorElement = indicator.createIndicator(wedgesWithoutAngles[0]!, wedgesWithoutAngles, mockContainer);
@@ -302,7 +302,7 @@ describe('integration scenarios', () => {
 
   it('should handle single wedge scenario', () => {
     const singleWedge: Wedge[] = [
-      { id: 'only', label: 'Only Wedge', weight: 1, color: '#ff0000' }
+      { id: 'only', label: 'Only Wedge', weight: 1, color: '#ff0000' },
     ];
     
     const indicatorElement = indicator.createIndicator(singleWedge[0]!, singleWedge, mockContainer);
@@ -312,14 +312,14 @@ describe('integration scenarios', () => {
 
   it('should handle dynamic wedge updates', () => {
     const initialWedges: Wedge[] = [
-      { id: 'dynamic', label: 'Dynamic', weight: 1, color: '#ff0000' }
+      { id: 'dynamic', label: 'Dynamic', weight: 1, color: '#ff0000' },
     ];
     
     const indicatorElement = indicator.createIndicator(initialWedges[0]!, initialWedges, mockContainer);
     
     // Update wedge weight
     const updatedWedges: Wedge[] = [
-      { id: 'dynamic', label: 'Dynamic', weight: 5, color: '#ff0000' }
+      { id: 'dynamic', label: 'Dynamic', weight: 5, color: '#ff0000' },
     ];
     
     indicatorElement.update(updatedWedges[0]!, updatedWedges);

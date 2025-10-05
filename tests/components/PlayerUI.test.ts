@@ -10,7 +10,7 @@ Object.defineProperty(window, 'requestAnimationFrame', {
   writable: true,
   value: (callback: FrameRequestCallback) => {
     return setTimeout(callback, 16);
-  }
+  },
 });
 
 describe('PlayerUI', () => {
@@ -46,7 +46,7 @@ describe('PlayerUI', () => {
         showAvatars: false,
         showScores: false,
         showRoundInfo: false,
-        maxPlayersDisplayed: 4
+        maxPlayersDisplayed: 4,
       };
       
       const customPlayerUI = new PlayerUI(container, playerManager, customConfig);
@@ -81,7 +81,7 @@ describe('PlayerUI', () => {
       expect(playerName?.textContent).toBe('Alice');
       
       const turnIndicator = playerCard?.querySelector('.turn-indicator');
-      expect(turnIndicator?.textContent).toBe("It's your turn!");
+      expect(turnIndicator?.textContent).toBe('It\'s your turn!');
     });
 
     test('should display player avatar when provided', () => {
@@ -91,7 +91,7 @@ describe('PlayerUI', () => {
       const avatar = container.querySelector('.player-avatar') as HTMLImageElement;
       expect(avatar).toBeTruthy();
       expect(avatar.src).toBe('https://example.com/avatar.jpg');
-      expect(avatar.alt).toBe("Alice's avatar");
+      expect(avatar.alt).toBe('Alice\'s avatar');
     });
 
     test('should display player score', () => {
@@ -173,7 +173,7 @@ describe('PlayerUI', () => {
       for (let i = 1; i <= 5; i++) {
         playerManager.addPlayer(`Player ${i}`);
         playerManager.recordTurnResult(`Result ${i}`, i * 10);
-        if (i < 5) playerManager.nextTurn();
+        if (i < 5) {playerManager.nextTurn();}
       }
       
       // Update config to show only 3 players
@@ -339,7 +339,7 @@ describe('PlayerUI', () => {
       playerManager.addPlayer('Alice');
       
       // Initially scoreboard should be shown
-      let scoreboard = container.querySelector('.scoreboard-section');
+      const scoreboard = container.querySelector('.scoreboard-section');
       expect(scoreboard).toBeTruthy();
       
       // Disable scoreboard

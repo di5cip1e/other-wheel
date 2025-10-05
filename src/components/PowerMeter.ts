@@ -41,7 +41,6 @@ export class PowerMeter {
   private callbacks: PowerMeterCallbacks;
   private options: Required<PowerMeterOptions>;
   private startTime: number = 0;
-  private previousValue: number = 50;
   private lastTickTime: number = 0;
 
   constructor(options: PowerMeterOptions, callbacks: PowerMeterCallbacks = {}) {
@@ -54,14 +53,14 @@ export class PowerMeter {
       minAngularVelocity: options.minAngularVelocity || 0.5,
       maxAngularVelocity: options.maxAngularVelocity || 8.0,
       showTimingFeedback: options.showTimingFeedback !== false,
-      powerCurve: options.powerCurve || 'quadratic'
+      powerCurve: options.powerCurve || 'quadratic',
     };
-    
+
     this.callbacks = callbacks;
     this.state = {
       value: 50, // Start at middle position
       isActive: false,
-      oscillationSpeed: this.options.oscillationSpeed
+      oscillationSpeed: this.options.oscillationSpeed,
     };
 
     const container = document.getElementById(this.options.containerId);
@@ -69,7 +68,7 @@ export class PowerMeter {
       throw new Error(`Container element with id '${this.options.containerId}' not found`);
     }
     this.container = container;
-    
+
     this.initializePowerMeter();
   }
 
@@ -155,7 +154,7 @@ export class PowerMeter {
       { start: 20, end: 40, color: 'rgba(255, 255, 68, 0.3)', label: 'Good' },
       { start: 40, end: 60, color: 'rgba(68, 255, 68, 0.3)', label: 'Excellent' },
       { start: 60, end: 80, color: 'rgba(68, 255, 68, 0.3)', label: 'Excellent' },
-      { start: 80, end: 100, color: 'rgba(255, 255, 68, 0.3)', label: 'Good' }
+      { start: 80, end: 100, color: 'rgba(255, 255, 68, 0.3)', label: 'Good' },
     ];
 
     zones.forEach(zone => {
@@ -183,46 +182,46 @@ export class PowerMeter {
    * Starts the meter animation with smooth oscillation patterns
    */
   public startMeter(): void {
-    if (this.state.isActive) return;
-    
+    if (this.state.isActive) {return;}
+
     this.state.isActive = true;
     this.button.textContent = 'Stop Meter';
     this.button.style.backgroundColor = '#f44336';
     this.startTime = performance.now();
-    
+
     if (this.callbacks.onStart) {
       this.callbacks.onStart();
     }
-    
+
     // Start smooth animation using requestAnimationFrame
     this.animate();
   }
 
   private animate(): void {
-    if (!this.state.isActive) return;
+    if (!this.state.isActive) {return;}
 
     const currentTime = performance.now();
     const elapsed = (currentTime - this.startTime) / 1000; // Convert to seconds
-    
+
     // Calculate oscillation value based on pattern
     const newValue = this.calculateOscillationValue(elapsed);
-    
+
     // Detect direction changes for tick audio (when crossing 25%, 50%, 75%)
     this.detectTicks(this.state.value, newValue, currentTime);
-    
+
     this.state.value = newValue;
     this.updateIndicatorPosition();
     this.updatePowerDisplay();
-    
+
     this.animationFrame = requestAnimationFrame(() => this.animate());
   }
 
   private detectTicks(oldValue: number, newValue: number, currentTime: number): void {
     // Only play ticks if enough time has passed (throttle to avoid too many sounds)
-    if (currentTime - this.lastTickTime < 100) return; // Minimum 100ms between ticks
-    
+    if (currentTime - this.lastTickTime < 100) {return;} // Minimum 100ms between ticks
+
     const tickPoints = [25, 50, 75];
-    
+
     for (const point of tickPoints) {
       // Check if we crossed this tick point
       if ((oldValue < point && newValue >= point) || (oldValue > point && newValue <= point)) {
@@ -238,31 +237,31 @@ export class PowerMeter {
   private calculateOscillationValue(elapsed: number): number {
     const frequency = this.options.oscillationSpeed;
     const phase = elapsed * frequency * 2 * Math.PI;
-    
+
     let normalizedValue: number;
-    
+
     switch (this.options.oscillationPattern) {
-      case 'linear':
-        // Triangle wave
-        normalizedValue = 2 * Math.abs((phase / (2 * Math.PI)) % 1 - 0.5);
-        break;
-      case 'sine':
-        // Sine wave (0 to 1)
-        normalizedValue = (Math.sin(phase) + 1) / 2;
-        break;
-      case 'triangle':
-        // Triangle wave
-        const t = (phase / (2 * Math.PI)) % 1;
-        normalizedValue = t < 0.5 ? 2 * t : 2 * (1 - t);
-        break;
-      case 'sawtooth':
-        // Sawtooth wave
-        normalizedValue = (phase / (2 * Math.PI)) % 1;
-        break;
-      default:
-        normalizedValue = (Math.sin(phase) + 1) / 2;
+    case 'linear':
+      // Triangle wave
+      normalizedValue = 2 * Math.abs((phase / (2 * Math.PI)) % 1 - 0.5);
+      break;
+    case 'sine':
+      // Sine wave (0 to 1)
+      normalizedValue = (Math.sin(phase) + 1) / 2;
+      break;
+    case 'triangle':
+      // Triangle wave
+      const t = (phase / (2 * Math.PI)) % 1;
+      normalizedValue = t < 0.5 ? 2 * t : 2 * (1 - t);
+      break;
+    case 'sawtooth':
+      // Sawtooth wave
+      normalizedValue = (phase / (2 * Math.PI)) % 1;
+      break;
+    default:
+      normalizedValue = (Math.sin(phase) + 1) / 2;
     }
-    
+
     return Math.round(normalizedValue * 100);
   }
 
@@ -270,27 +269,27 @@ export class PowerMeter {
    * Stops the meter and captures the power value with timing feedback
    */
   public stopMeter(): void {
-    if (!this.state.isActive) return;
-    
+    if (!this.state.isActive) {return;}
+
     if (this.animationFrame !== null) {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = null;
     }
-    
+
     this.state.isActive = false;
     this.button.textContent = 'Spinning...';
     this.button.disabled = true;
     this.button.style.backgroundColor = '#666';
-    
+
     // Calculate timing accuracy and angular velocity
     const timingFeedback = this.calculateTimingFeedback(this.state.value);
     const angularVelocity = this.powerToAngularVelocity(this.state.value);
-    
+
     // Show timing feedback
     if (this.options.showTimingFeedback) {
       this.displayTimingFeedback(timingFeedback);
     }
-    
+
     if (this.callbacks.onStop) {
       this.callbacks.onStop(this.state.value, angularVelocity, timingFeedback.accuracy);
     }
@@ -302,23 +301,23 @@ export class PowerMeter {
   public powerToAngularVelocity(power: number): number {
     const normalizedPower = Math.max(0, Math.min(100, power)) / 100;
     const { minAngularVelocity, maxAngularVelocity, powerCurve } = this.options;
-    
+
     let curveValue: number;
-    
+
     switch (powerCurve) {
-      case 'linear':
-        curveValue = normalizedPower;
-        break;
-      case 'quadratic':
-        curveValue = normalizedPower * normalizedPower;
-        break;
-      case 'cubic':
-        curveValue = normalizedPower * normalizedPower * normalizedPower;
-        break;
-      default:
-        curveValue = normalizedPower * normalizedPower; // Default to quadratic
+    case 'linear':
+      curveValue = normalizedPower;
+      break;
+    case 'quadratic':
+      curveValue = normalizedPower * normalizedPower;
+      break;
+    case 'cubic':
+      curveValue = normalizedPower * normalizedPower * normalizedPower;
+      break;
+    default:
+      curveValue = normalizedPower * normalizedPower; // Default to quadratic
     }
-    
+
     return minAngularVelocity + (maxAngularVelocity - minAngularVelocity) * curveValue;
   }
 
@@ -329,7 +328,7 @@ export class PowerMeter {
     let accuracy: number;
     let zone: TimingFeedback['zone'];
     let color: string;
-    
+
     // Define optimal power ranges for timing accuracy
     if (power >= 45 && power <= 55) {
       // Perfect zone (center)
@@ -354,13 +353,13 @@ export class PowerMeter {
       zone = 'poor';
       color = '#ff4444';
     }
-    
+
     return { accuracy, zone, color };
   }
 
   private displayTimingFeedback(feedback: TimingFeedback): void {
-    if (!this.feedbackDisplay) return;
-    
+    if (!this.feedbackDisplay) {return;}
+
     const accuracyPercent = Math.round(feedback.accuracy * 100);
     this.feedbackDisplay.textContent = `Timing: ${feedback.zone.toUpperCase()} (${accuracyPercent}%)`;
     this.feedbackDisplay.style.color = feedback.color;
@@ -375,16 +374,16 @@ export class PowerMeter {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = null;
     }
-    
+
     this.state.isActive = false;
     this.state.value = 50; // Reset to middle position
     this.button.textContent = 'Start Spin';
     this.button.disabled = false;
     this.button.style.backgroundColor = '#4CAF50';
-    
+
     this.updateIndicatorPosition();
     this.updatePowerDisplay();
-    
+
     if (this.feedbackDisplay) {
       this.feedbackDisplay.textContent = '';
     }
@@ -398,7 +397,7 @@ export class PowerMeter {
 
   private updatePowerDisplay(): void {
     this.powerDisplay.textContent = `Power: ${this.state.value}%`;
-    
+
     // Color code the power display
     if (this.state.value >= 45 && this.state.value <= 55) {
       this.powerDisplay.style.color = '#00aa00'; // Perfect zone

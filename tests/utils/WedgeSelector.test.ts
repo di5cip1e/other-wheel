@@ -20,20 +20,20 @@ describe('WedgeSelector', () => {
         id: 'wedge1',
         label: 'Low Weight',
         weight: 1,
-        color: '#ff0000'
+        color: '#ff0000',
       },
       {
         id: 'wedge2',
         label: 'Medium Weight',
         weight: 3,
-        color: '#00ff00'
+        color: '#00ff00',
       },
       {
         id: 'wedge3',
         label: 'High Weight',
         weight: 6,
-        color: '#0000ff'
-      }
+        color: '#0000ff',
+      },
     ];
   });
 
@@ -123,7 +123,7 @@ describe('WedgeSelector', () => {
       const wedgesWithVisualAngles: Wedge[] = [
         { ...testWedges[0]!, visualAngle: 90 },
         { ...testWedges[1]!, visualAngle: 180 },
-        { ...testWedges[2]!, visualAngle: 90 }
+        { ...testWedges[2]!, visualAngle: 90 },
       ];
       
       const analysis = wedgeSelector.analyzeWeightDistribution(wedgesWithVisualAngles);
@@ -218,7 +218,7 @@ describe('WedgeSelector', () => {
       const wedgesWithMismatch: Wedge[] = [
         { ...testWedges[0]!, visualAngle: 180 }, // High visual, low weight = high severity
         { ...testWedges[1]!, visualAngle: 120 }, // Medium mismatch
-        { ...testWedges[2]!, visualAngle: 60 }   // Low visual, high weight = high severity
+        { ...testWedges[2]!, visualAngle: 60 },   // Low visual, high weight = high severity
       ];
       
       const indicators = wedgeSelector.generateVisualIndicators(wedgesWithMismatch);
@@ -232,7 +232,7 @@ describe('WedgeSelector', () => {
   describe('weight validation', () => {
     it('should throw error for negative weights', () => {
       const invalidWedges = [
-        { ...testWedges[0]!, weight: -1 }
+        { ...testWedges[0]!, weight: -1 },
       ];
       
       expect(() => wedgeSelector.selectWedge(invalidWedges)).toThrow('All weights must be non-negative');
@@ -246,7 +246,7 @@ describe('WedgeSelector', () => {
 
     it('should throw error for infinite weights', () => {
       const infiniteWeightWedges = [
-        { ...testWedges[0]!, weight: Infinity }
+        { ...testWedges[0]!, weight: Infinity },
       ];
       
       expect(() => wedgeSelector.selectWedge(infiniteWeightWedges)).toThrow('All weights must be finite numbers');
@@ -254,7 +254,7 @@ describe('WedgeSelector', () => {
 
     it('should throw error for NaN weights', () => {
       const nanWeightWedges = [
-        { ...testWedges[0]!, weight: NaN }
+        { ...testWedges[0]!, weight: NaN },
       ];
       
       expect(() => wedgeSelector.selectWedge(nanWeightWedges)).toThrow('All weights must be finite numbers');
@@ -299,7 +299,7 @@ describe('WedgeSelector', () => {
     it('should handle extreme weight distributions', () => {
       const extremeWedges: Wedge[] = [
         { id: 'rare', label: 'Rare', weight: 1, color: '#ff0000' },
-        { id: 'common', label: 'Common', weight: 99, color: '#00ff00' }
+        { id: 'common', label: 'Common', weight: 99, color: '#00ff00' },
       ];
       
       const testResult = wedgeSelector.testWeightDistributionAccuracy(extremeWedges, 10000, 0.05, 12345);
@@ -314,7 +314,7 @@ describe('WedgeSelector', () => {
         id: `wedge${i}`,
         label: `Wedge ${i}`,
         weight: i + 1, // weights 1, 2, 3, ..., 10
-        color: `#${i.toString(16).repeat(6).slice(0, 6)}`
+        color: `#${i.toString(16).repeat(6).slice(0, 6)}`,
       }));
       
       const testResult = wedgeSelector.testWeightDistributionAccuracy(manyWedges, 20000, 0.05, 12345);

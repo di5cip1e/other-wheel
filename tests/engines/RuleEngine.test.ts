@@ -13,11 +13,11 @@ describe('RuleEngine', () => {
         outerWedgeId: 'wedge1',
         innerWedgeId: 'wedge2',
         outerWedgeLabel: 'Red',
-        innerWedgeLabel: 'Blue'
+        innerWedgeLabel: 'Blue',
       },
       playerScore: 50,
       gameHistory: [],
-      roundNumber: 1
+      roundNumber: 1,
     };
   });
 
@@ -33,7 +33,7 @@ describe('RuleEngine', () => {
       const invalidRule: Rule = {
         ...createValidRule(),
         name: '', // Invalid empty name
-        conditions: [] // Invalid empty conditions
+        conditions: [], // Invalid empty conditions
       };
       
       expect(() => ruleEngine.addRule(invalidRule)).toThrow();
@@ -98,7 +98,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge1', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge1', wheel: 'outer' },
       });
       
       ruleEngine.addRule(rule);
@@ -111,7 +111,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge2', wheel: 'inner' }
+        parameters: { wedgeId: 'wedge2', wheel: 'inner' },
       });
       
       ruleEngine.addRule(rule);
@@ -124,7 +124,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge1', wheel: 'both' }
+        parameters: { wedgeId: 'wedge1', wheel: 'both' },
       });
       
       ruleEngine.addRule(rule);
@@ -137,7 +137,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge3', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge3', wheel: 'outer' },
       });
       
       ruleEngine.addRule(rule);
@@ -155,8 +155,8 @@ describe('RuleEngine', () => {
         parameters: { 
           outerWedgeId: 'wedge1', 
           innerWedgeId: 'wedge2', 
-          matchType: 'exact' 
-        }
+          matchType: 'exact', 
+        },
       });
       
       ruleEngine.addRule(rule);
@@ -172,8 +172,8 @@ describe('RuleEngine', () => {
         parameters: { 
           outerWedgeId: 'wedge1', 
           innerWedgeId: 'wedge3', 
-          matchType: 'any' 
-        }
+          matchType: 'any', 
+        },
       });
       
       ruleEngine.addRule(rule);
@@ -189,8 +189,8 @@ describe('RuleEngine', () => {
         parameters: { 
           outerWedgeId: 'wedge3', 
           innerWedgeId: 'wedge4', 
-          matchType: 'any' 
-        }
+          matchType: 'any', 
+        },
       });
       
       ruleEngine.addRule(rule);
@@ -205,7 +205,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'score_threshold',
-        parameters: { threshold: 50, operator: 'gte' }
+        parameters: { threshold: 50, operator: 'gte' },
       });
       
       ruleEngine.addRule(rule);
@@ -218,7 +218,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'score_threshold',
-        parameters: { threshold: 100, operator: 'lte' }
+        parameters: { threshold: 100, operator: 'lte' },
       });
       
       ruleEngine.addRule(rule);
@@ -231,7 +231,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'score_threshold',
-        parameters: { threshold: 50, operator: 'eq' }
+        parameters: { threshold: 50, operator: 'eq' },
       });
       
       ruleEngine.addRule(rule);
@@ -244,7 +244,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'score_threshold',
-        parameters: { threshold: 100, operator: 'gte' }
+        parameters: { threshold: 100, operator: 'gte' },
       });
       
       ruleEngine.addRule(rule);
@@ -261,14 +261,14 @@ describe('RuleEngine', () => {
         gameHistory: [
           { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 10, timestamp: '2023-01-01' },
           { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 15, timestamp: '2023-01-02' },
-          { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 20, timestamp: '2023-01-03' }
-        ]
+          { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 20, timestamp: '2023-01-03' },
+        ],
       };
       
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'consecutive_wins',
-        parameters: { count: 3 }
+        parameters: { count: 3 },
       });
       
       ruleEngine.addRule(rule);
@@ -283,14 +283,14 @@ describe('RuleEngine', () => {
         gameHistory: [
           { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 10, timestamp: '2023-01-01' },
           { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 0, timestamp: '2023-01-02' },
-          { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 20, timestamp: '2023-01-03' }
-        ]
+          { playerId: 'player1', outerWedgeId: 'w1', innerWedgeId: 'w2', points: 20, timestamp: '2023-01-03' },
+        ],
       };
       
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'consecutive_wins',
-        parameters: { count: 3 }
+        parameters: { count: 3 },
       });
       
       ruleEngine.addRule(rule);
@@ -303,7 +303,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'consecutive_wins',
-        parameters: { count: 5 }
+        parameters: { count: 5 },
       });
       
       ruleEngine.addRule(rule);
@@ -318,7 +318,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'avoid_wedge',
-        parameters: { wedgeId: 'wedge1', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge1', wheel: 'outer' },
       });
       
       ruleEngine.addRule(rule);
@@ -331,7 +331,7 @@ describe('RuleEngine', () => {
       const rule = createRuleWithCondition({
         id: 'cond1',
         type: 'avoid_wedge',
-        parameters: { wedgeId: 'wedge3', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge3', wheel: 'outer' },
       });
       
       ruleEngine.addRule(rule);
@@ -349,15 +349,15 @@ describe('RuleEngine', () => {
           {
             id: 'cond1',
             type: 'specific_wedge',
-            parameters: { wedgeId: 'wedge1', wheel: 'outer' }
+            parameters: { wedgeId: 'wedge1', wheel: 'outer' },
           },
           {
             id: 'cond2',
             type: 'score_threshold',
             parameters: { threshold: 40, operator: 'gte' },
-            operator: 'AND'
-          }
-        ]
+            operator: 'AND',
+          },
+        ],
       };
       
       ruleEngine.addRule(rule);
@@ -373,15 +373,15 @@ describe('RuleEngine', () => {
           {
             id: 'cond1',
             type: 'specific_wedge',
-            parameters: { wedgeId: 'wedge3', wheel: 'outer' } // Won't match
+            parameters: { wedgeId: 'wedge3', wheel: 'outer' }, // Won't match
           },
           {
             id: 'cond2',
             type: 'score_threshold',
             parameters: { threshold: 40, operator: 'gte' }, // Will match
-            operator: 'OR'
-          }
-        ]
+            operator: 'OR',
+          },
+        ],
       };
       
       ruleEngine.addRule(rule);
@@ -397,15 +397,15 @@ describe('RuleEngine', () => {
           {
             id: 'cond1',
             type: 'specific_wedge',
-            parameters: { wedgeId: 'wedge1', wheel: 'outer' } // Will match
+            parameters: { wedgeId: 'wedge1', wheel: 'outer' }, // Will match
           },
           {
             id: 'cond2',
             type: 'specific_wedge',
             parameters: { wedgeId: 'wedge3', wheel: 'outer' }, // Won't match, so NOT will be true
-            operator: 'NOT'
-          }
-        ]
+            operator: 'NOT',
+          },
+        ],
       };
       
       ruleEngine.addRule(rule);
@@ -461,7 +461,7 @@ describe('RuleEngine', () => {
     it('should validate rule with missing ID', () => {
       const invalidRule: Rule = {
         ...createValidRule(),
-        id: ''
+        id: '',
       };
       
       const errors = ruleEngine.validateRule(invalidRule);
@@ -473,7 +473,7 @@ describe('RuleEngine', () => {
     it('should validate rule with missing name', () => {
       const invalidRule: Rule = {
         ...createValidRule(),
-        name: ''
+        name: '',
       };
       
       const errors = ruleEngine.validateRule(invalidRule);
@@ -484,7 +484,7 @@ describe('RuleEngine', () => {
     it('should validate rule with invalid priority', () => {
       const invalidRule: Rule = {
         ...createValidRule(),
-        priority: 150
+        priority: 150,
       };
       
       const errors = ruleEngine.validateRule(invalidRule);
@@ -495,7 +495,7 @@ describe('RuleEngine', () => {
     it('should validate rule with no conditions', () => {
       const invalidRule: Rule = {
         ...createValidRule(),
-        conditions: []
+        conditions: [],
       };
       
       const errors = ruleEngine.validateRule(invalidRule);
@@ -509,8 +509,8 @@ describe('RuleEngine', () => {
         conditions: [{
           id: 'cond1',
           type: 'specific_wedge',
-          parameters: { wedgeId: '', wheel: 'invalid' } // Invalid parameters
-        }]
+          parameters: { wedgeId: '', wheel: 'invalid' }, // Invalid parameters
+        }],
       };
       
       const errors = ruleEngine.validateRule(invalidRule);
@@ -527,12 +527,12 @@ describe('RuleEngine', () => {
       winRule.conditions = [{
         id: 'cond1',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge1', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge1', wheel: 'outer' },
       }];
       loseRule.conditions = [{
         id: 'cond2',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge1', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge1', wheel: 'outer' },
       }];
       
       ruleEngine.addRule(winRule);
@@ -567,8 +567,8 @@ describe('RuleEngine', () => {
         conditions: [{
           id: 'cond1',
           type: 'unknown_type' as any,
-          parameters: {}
-        }]
+          parameters: {},
+        }],
       };
       
       // Should not throw during evaluation
@@ -592,7 +592,7 @@ describe('RuleEngine', () => {
     id: string = 'test-rule',
     priority: number = 50,
     isActive: boolean = true,
-    outcome: 'win' | 'lose' | 'continue' = 'continue'
+    outcome: 'win' | 'lose' | 'continue' = 'continue',
   ): Rule {
     return {
       id,
@@ -603,20 +603,20 @@ describe('RuleEngine', () => {
       conditions: [{
         id: 'cond1',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge1', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge1', wheel: 'outer' },
       }],
       outcome,
       points: outcome === 'win' ? 10 : outcome === 'lose' ? -5 : 0,
       message: `Rule ${id} triggered`,
       createdAt: '2023-01-01T00:00:00Z',
-      modifiedAt: '2023-01-01T00:00:00Z'
+      modifiedAt: '2023-01-01T00:00:00Z',
     };
   }
 
   function createRuleWithCondition(condition: RuleCondition): Rule {
     return {
       ...createValidRule(),
-      conditions: [condition]
+      conditions: [condition],
     };
   }
 });

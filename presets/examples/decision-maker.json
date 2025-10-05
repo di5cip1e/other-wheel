@@ -1,0 +1,214 @@
+{
+  "id": "decision-maker",
+  "name": "Decision Maker",
+  "description": "Simple decision-making wheel for everyday choices",
+  "version": "1.0.0",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "modifiedAt": "2024-01-01T00:00:00Z",
+  "author": "Wheel Game Team",
+  "gameConfig": {
+    "wheels": [
+      {
+        "id": "outer",
+        "label": "Main Choices",
+        "wedges": [
+          {
+            "id": "choice1",
+            "label": "Option A",
+            "weight": 1,
+            "style": {
+              "fillColor": "#3498db",
+              "strokeColor": "#2980b9",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "choice2",
+            "label": "Option B",
+            "weight": 1,
+            "style": {
+              "fillColor": "#e74c3c",
+              "strokeColor": "#c0392b",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "choice3",
+            "label": "Option C",
+            "weight": 1,
+            "style": {
+              "fillColor": "#2ecc71",
+              "strokeColor": "#27ae60",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "choice4",
+            "label": "Option D",
+            "weight": 1,
+            "style": {
+              "fillColor": "#f39c12",
+              "strokeColor": "#e67e22",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "choice5",
+            "label": "Think More",
+            "weight": 0.5,
+            "style": {
+              "fillColor": "#95a5a6",
+              "strokeColor": "#7f8c8d",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "choice6",
+            "label": "Ask Someone",
+            "weight": 0.5,
+            "style": {
+              "fillColor": "#9b59b6",
+              "strokeColor": "#8e44ad",
+              "textColor": "#ffffff"
+            }
+          }
+        ],
+        "physicsProperties": {
+          "frictionCoefficient": 0.02,
+          "clutchRatio": 0,
+          "momentOfInertia": 1.0
+        },
+        "renderProperties": {
+          "radius": 200,
+          "strokeWidth": 2,
+          "showLabels": true,
+          "labelFont": "18px Roboto, sans-serif"
+        }
+      },
+      {
+        "id": "inner",
+        "label": "Confidence Level",
+        "wedges": [
+          {
+            "id": "conf1",
+            "label": "Sure!",
+            "weight": 2,
+            "style": {
+              "fillColor": "#27ae60",
+              "strokeColor": "#2ecc71",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "conf2",
+            "label": "Maybe",
+            "weight": 3,
+            "style": {
+              "fillColor": "#f39c12",
+              "strokeColor": "#e67e22",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "conf3",
+            "label": "Unsure",
+            "weight": 2,
+            "style": {
+              "fillColor": "#e74c3c",
+              "strokeColor": "#c0392b",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "conf4",
+            "label": "Spin Again",
+            "weight": 1,
+            "style": {
+              "fillColor": "#95a5a6",
+              "strokeColor": "#7f8c8d",
+              "textColor": "#ffffff"
+            }
+          }
+        ],
+        "physicsProperties": {
+          "frictionCoefficient": 0.025,
+          "clutchRatio": 0.4,
+          "momentOfInertia": 0.3
+        },
+        "renderProperties": {
+          "radius": 80,
+          "strokeWidth": 2,
+          "showLabels": true,
+          "labelFont": "14px Roboto, sans-serif"
+        }
+      }
+    ],
+    "rules": [
+      {
+        "id": "spin-again-rule",
+        "name": "Spin Again",
+        "type": "specific",
+        "conditions": [
+          {
+            "wheelId": "inner",
+            "wedgeId": "conf4"
+          }
+        ],
+        "outcome": {
+          "type": "free-spin",
+          "message": "🔄 The wheel says spin again!",
+          "action": "grant-extra-turn"
+        }
+      },
+      {
+        "id": "think-more-rule",
+        "name": "Think More",
+        "type": "specific",
+        "conditions": [
+          {
+            "wheelId": "outer",
+            "wedgeId": "choice5"
+          }
+        ],
+        "outcome": {
+          "type": "message",
+          "message": "🤔 Take some time to think it over...",
+          "score": 0
+        }
+      }
+    ],
+    "settings": {
+      "maxPlayers": 1,
+      "enableSound": true,
+      "theme": "clean",
+      "deterministic": false
+    },
+    "theme": {
+      "name": "Clean Decision",
+      "colors": {
+        "primary": "#3498db",
+        "secondary": "#ecf0f1",
+        "background": "#ffffff",
+        "text": "#2c3e50"
+      },
+      "fonts": {
+        "primary": "Roboto, sans-serif",
+        "secondary": "Open Sans, sans-serif"
+      },
+      "effects": {
+        "sparkles": false,
+        "confetti": false,
+        "soundEffects": true
+      }
+    }
+  },
+  "metadata": {
+    "tags": ["decision", "utility", "simple", "single-player"],
+    "difficulty": "easy",
+    "playerCount": {
+      "min": 1,
+      "max": 1
+    },
+    "estimatedDuration": 2
+  }
+}

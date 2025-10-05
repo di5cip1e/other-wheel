@@ -14,9 +14,9 @@ class MockAudioContext {
   createGain() {
     return {
       gain: {
-        setValueAtTime: jest.fn()
+        setValueAtTime: jest.fn(),
       },
-      connect: jest.fn()
+      connect: jest.fn(),
     };
   }
 
@@ -27,14 +27,14 @@ class MockAudioContext {
       connect: jest.fn(),
       start: jest.fn(),
       stop: jest.fn(),
-      onended: null
+      onended: null,
     };
   }
 
   decodeAudioData(_arrayBuffer: ArrayBuffer) {
     return Promise.resolve({
       length: 1000,
-      sampleRate: 44100
+      sampleRate: 44100,
     });
   }
 
@@ -50,8 +50,8 @@ class MockAudioContext {
 // Mock fetch for audio loading
 global.fetch = jest.fn(() =>
   Promise.resolve({
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(1000))
-  })
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(1000)),
+  }),
 ) as jest.Mock;
 
 // Mock AudioContext
@@ -73,52 +73,52 @@ describe('AudioEngine', () => {
           id: 'wheel-spin',
           name: 'Wheel Spin',
           url: '/test/wheel-spin.mp3',
-          volume: 0.8
+          volume: 0.8,
         },
         wheelStop: {
           id: 'wheel-stop',
           name: 'Wheel Stop',
           url: '/test/wheel-stop.mp3',
-          volume: 0.9
+          volume: 0.9,
         },
         powerMeterTick: {
           id: 'power-meter-tick',
           name: 'Power Meter Tick',
           url: '/test/power-meter-tick.mp3',
-          volume: 0.6
+          volume: 0.6,
         },
         resultReveal: {
           id: 'result-reveal',
           name: 'Result Reveal',
           url: '/test/result-reveal.mp3',
-          volume: 1.0
+          volume: 1.0,
         },
         buttonClick: {
           id: 'button-click',
           name: 'Button Click',
           url: '/test/button-click.mp3',
-          volume: 0.7
+          volume: 0.7,
         },
         gameStart: {
           id: 'game-start',
           name: 'Game Start',
           url: '/test/game-start.mp3',
-          volume: 0.9
+          volume: 0.9,
         },
         gameEnd: {
           id: 'game-end',
           name: 'Game End',
           url: '/test/game-end.mp3',
-          volume: 0.9
-        }
+          volume: 0.9,
+        },
       },
       backgroundMusic: {
         id: 'background-music',
         name: 'Background Music',
         url: '/test/background-music.mp3',
         volume: 0.4,
-        loop: true
-      }
+        loop: true,
+      },
     };
 
     audioEngine = new AudioEngine();
@@ -147,7 +147,7 @@ describe('AudioEngine', () => {
         musicVolume: 0.3,
         enabled: false,
         soundEffectsEnabled: false,
-        musicEnabled: false
+        musicEnabled: false,
       };
 
       const customAudioEngine = new AudioEngine(customConfig);
@@ -198,7 +198,7 @@ describe('AudioEngine', () => {
         connect: jest.fn(),
         start: jest.fn(),
         stop: jest.fn(),
-        onended: null
+        onended: null,
       };
 
       // Mock createBufferSource to return our mock
@@ -214,7 +214,7 @@ describe('AudioEngine', () => {
       audioEngine.setSoundEffectsEnabled(false);
       
       const mockSource = {
-        start: jest.fn()
+        start: jest.fn(),
       };
       
       const mockContext = audioEngine['audioContext'] as any;
@@ -229,7 +229,7 @@ describe('AudioEngine', () => {
       audioEngine.setEnabled(false);
       
       const mockSource = {
-        start: jest.fn()
+        start: jest.fn(),
       };
       
       const mockContext = audioEngine['audioContext'] as any;
@@ -256,7 +256,7 @@ describe('AudioEngine', () => {
         connect: jest.fn(),
         start: jest.fn(),
         stop: jest.fn(),
-        onended: null
+        onended: null,
       };
 
       const mockSource2 = {
@@ -265,7 +265,7 @@ describe('AudioEngine', () => {
         connect: jest.fn(),
         start: jest.fn(),
         stop: jest.fn(),
-        onended: null
+        onended: null,
       };
 
       const mockContext = audioEngine['audioContext'] as any;
@@ -293,7 +293,7 @@ describe('AudioEngine', () => {
         connect: jest.fn(),
         start: jest.fn(),
         stop: jest.fn(),
-        onended: null
+        onended: null,
       };
 
       const mockContext = audioEngine['audioContext'] as any;
@@ -308,7 +308,7 @@ describe('AudioEngine', () => {
       audioEngine.setMusicEnabled(false);
       
       const mockSource = {
-        start: jest.fn()
+        start: jest.fn(),
       };
       
       const mockContext = audioEngine['audioContext'] as any;
@@ -326,7 +326,7 @@ describe('AudioEngine', () => {
         connect: jest.fn(),
         start: jest.fn(),
         stop: jest.fn(),
-        onended: null
+        onended: null,
       };
 
       const mockContext = audioEngine['audioContext'] as any;
@@ -395,7 +395,7 @@ describe('AudioEngine', () => {
   describe('Cleanup', () => {
     it('should stop all sounds when disposing', () => {
       const mockSource = {
-        stop: jest.fn()
+        stop: jest.fn(),
       };
 
       audioEngine['activeSources'].set('test-sound', mockSource as any);

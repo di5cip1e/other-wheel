@@ -34,7 +34,7 @@ export class PhysicsEngine {
       timeStep: 1 / 60, // 60 FPS fixed timestep
       maxIterations: 1000,
       stabilityThreshold: 0.01, // rad/s
-      ...config
+      ...config,
     };
   }
 
@@ -44,14 +44,14 @@ export class PhysicsEngine {
   addWheel(
     wheelId: string, 
     config: WheelPhysicsConfig, 
-    initialState: Partial<PhysicsState> = {}
+    initialState: Partial<PhysicsState> = {},
   ): void {
     const state: PhysicsState = {
       angle: 0,
       angularVelocity: 0,
       angularAcceleration: 0,
       momentOfInertia: config.momentOfInertia,
-      ...initialState
+      ...initialState,
     };
 
     this.wheels.set(wheelId, state);
@@ -190,8 +190,8 @@ export class PhysicsEngine {
    */
   private normalizeAngle(angle: number): number {
     const TWO_PI = 2 * Math.PI;
-    while (angle < 0) angle += TWO_PI;
-    while (angle >= TWO_PI) angle -= TWO_PI;
+    while (angle < 0) {angle += TWO_PI;}
+    while (angle >= TWO_PI) {angle -= TWO_PI;}
     return angle;
   }
 

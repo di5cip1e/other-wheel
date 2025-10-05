@@ -15,7 +15,7 @@ const createMockContainer = (id: string) => ({
   appendChild: jest.fn(),
   id,
   querySelectorAll: jest.fn(() => []),
-  querySelector: jest.fn(() => null)
+  querySelector: jest.fn(() => null),
 } as unknown as HTMLElement);
 
 const createMockElement = () => ({
@@ -28,7 +28,7 @@ const createMockElement = () => ({
   onchange: null as any,
   dataset: {},
   querySelectorAll: jest.fn(() => []),
-  querySelector: jest.fn(() => null)
+  querySelector: jest.fn(() => null),
 } as unknown as HTMLElement);
 
 const createMockInput = () => ({
@@ -44,8 +44,8 @@ const createMockInput = () => ({
   onchange: null as any,
   classList: {
     add: jest.fn(),
-    remove: jest.fn()
-  }
+    remove: jest.fn(),
+  },
 } as unknown as HTMLInputElement);
 
 // Setup DOM mocks
@@ -78,14 +78,14 @@ describe('Editor Integration Tests', () => {
       wedges: [
         { id: 'wedge-1', label: 'Option A', weight: 1, color: '#ff6b6b' },
         { id: 'wedge-2', label: 'Option B', weight: 2, color: '#4ecdc4' },
-        { id: 'wedge-3', label: 'Option C', weight: 1.5, color: '#45b7d1' }
+        { id: 'wedge-3', label: 'Option C', weight: 1.5, color: '#45b7d1' },
       ],
       frictionCoefficient: 0.02,
       clutchRatio: 0.8,
       radius: 150,
       position: { x: 0, y: 0 },
       currentAngle: 0,
-      angularVelocity: 0
+      angularVelocity: 0,
     };
 
     wheelCallbacks = {
@@ -93,25 +93,25 @@ describe('Editor Integration Tests', () => {
       onWedgeRemove: jest.fn(),
       onWedgeUpdate: jest.fn(),
       onWheelUpdate: jest.fn(),
-      onPreviewUpdate: jest.fn()
+      onPreviewUpdate: jest.fn(),
     };
 
     wedgeCallbacks = {
       onWedgeUpdate: jest.fn(),
       onMediaUpload: jest.fn(),
-      onMediaValidation: jest.fn()
+      onMediaValidation: jest.fn(),
     };
 
     wheelEditor = new WheelEditor({
       containerId: 'wheel-editor-container',
       wheel: testWheel,
-      enablePreview: true
+      enablePreview: true,
     }, wheelCallbacks);
 
     wedgeEditor = new WedgeEditor({
       containerId: 'wedge-editor-container',
       wedge: testWheel.wedges[0]!,
-      showMediaOptions: true
+      showMediaOptions: true,
     }, wedgeCallbacks);
   });
 
@@ -127,7 +127,7 @@ describe('Editor Integration Tests', () => {
       wheelEditor.addWedgePublic({
         label: 'New Option',
         weight: 2.5,
-        color: '#00ff00'
+        color: '#00ff00',
       });
       
       expect(wheelEditor.getWedgeCount()).toBe(initialCount + 1);
@@ -146,7 +146,7 @@ describe('Editor Integration Tests', () => {
     it('should maintain data consistency when removing wedges', () => {
       const initialWedges = wheelEditor.getWedges();
       const wedgeToRemove = initialWedges[0];
-      if (!wedgeToRemove) throw new Error('No wedge found');
+      if (!wedgeToRemove) {throw new Error('No wedge found');}
       
       const success = wheelEditor.removeWedgePublic(wedgeToRemove.id);
       expect(success).toBe(true);
@@ -163,7 +163,7 @@ describe('Editor Integration Tests', () => {
     it('should prevent removing wedges when minimum count reached', () => {
       // Remove wedges until only 2 remain
       const wedges = wheelEditor.getWedges();
-      if (wedges[0]) wheelEditor.removeWedgePublic(wedges[0].id);
+      if (wedges[0]) {wheelEditor.removeWedgePublic(wedges[0].id);}
       
       expect(wheelEditor.getWedgeCount()).toBe(2);
       
@@ -220,8 +220,8 @@ describe('Editor Integration Tests', () => {
         media: {
           type: 'image',
           src: 'http://example.com/image.jpg',
-          alt: 'Test image'
-        }
+          alt: 'Test image',
+        },
       };
       
       wedgeEditor.setWedge(updatedWedge);
@@ -243,8 +243,8 @@ describe('Editor Integration Tests', () => {
         media: {
           type: 'image',
           src: '', // Empty URL
-          alt: 'Test'
-        }
+          alt: 'Test',
+        },
       };
       
       wedgeEditor.setWedge(wedgeWithEmptyMedia);
@@ -265,8 +265,8 @@ describe('Editor Integration Tests', () => {
         media: {
           type: 'image',
           src: 'http://example.com/image.jpg',
-          alt: 'Test image'
-        }
+          alt: 'Test image',
+        },
       };
       
       wedgeEditor.setWedge(wedgeWithImage);
@@ -278,8 +278,8 @@ describe('Editor Integration Tests', () => {
         ...currentWedge,
         media: {
           type: 'video',
-          src: 'http://example.com/video.mp4'
-        }
+          src: 'http://example.com/video.mp4',
+        },
       };
       
       wedgeEditor.setWedge(wedgeWithVideo);
@@ -291,7 +291,7 @@ describe('Editor Integration Tests', () => {
         id: currentWedge.id,
         label: currentWedge.label,
         weight: currentWedge.weight,
-        color: currentWedge.color
+        color: currentWedge.color,
       };
       
       wedgeEditor.setWedge(wedgeWithoutMedia);
@@ -305,14 +305,14 @@ describe('Editor Integration Tests', () => {
       // Get a wedge from the wheel editor
       const wheelWedges = wheelEditor.getWedges();
       const targetWedge = wheelWedges[0];
-      if (!targetWedge) throw new Error('No wedge found');
+      if (!targetWedge) {throw new Error('No wedge found');}
       
       // Update the wedge in the wedge editor
       const updatedWedge: Wedge = {
         id: targetWedge.id,
         label: 'Synchronized Update',
         weight: 4.0,
-        color: '#synchronized'
+        color: '#synchronized',
       };
       
       wedgeEditor.setWedge(updatedWedge);
@@ -321,7 +321,7 @@ describe('Editor Integration Tests', () => {
       wheelEditor.updateWedgePublic(targetWedge.id, {
         label: 'Synchronized Update',
         weight: 4.0,
-        color: '#synchronized'
+        color: '#synchronized',
       });
       
       // Verify both editors have the same data
@@ -339,7 +339,7 @@ describe('Editor Integration Tests', () => {
         id: 'invalid-wedge',
         label: '', // Invalid: empty label
         weight: -1, // Invalid: negative weight
-        color: '#ff0000'
+        color: '#ff0000',
       };
       
       wedgeEditor.setWedge(invalidWedge);
@@ -351,7 +351,7 @@ describe('Editor Integration Tests', () => {
       // Update the wheel with the same invalid wedge
       wheelEditor.updateWedgePublic(wheelEditor.getWedges()[0]?.id || 'invalid', {
         label: '',
-        weight: -1
+        weight: -1,
       });
       
       // Validation should also fail in wheel editor
@@ -366,7 +366,7 @@ describe('Editor Integration Tests', () => {
       wheelEditor.addWedgePublic({
         label: 'Preview Test',
         weight: 1,
-        color: '#preview'
+        color: '#preview',
       });
       
       // Preview callback should be triggered
@@ -390,8 +390,8 @@ describe('Editor Integration Tests', () => {
         media: {
           type: 'image',
           src: 'http://example.com/preview.jpg',
-          alt: 'Preview image'
-        }
+          alt: 'Preview image',
+        },
       };
       
       wedgeEditor.setWedge(wedgeWithMedia);
@@ -413,7 +413,7 @@ describe('Editor Integration Tests', () => {
           const wheel = wheelEditor.getWheel();
           wheel.frictionCoefficient = 0.08;
           wheelEditor.setWheel(wheel);
-        }
+        },
       ];
       
       // Execute operations
@@ -433,12 +433,12 @@ describe('Editor Integration Tests', () => {
       // Simulate concurrent operations on the same data
       const wheelWedges = wheelEditor.getWedges();
       const targetWedge = wheelWedges[0];
-      if (!targetWedge) throw new Error('No wedge found');
+      if (!targetWedge) {throw new Error('No wedge found');}
       
       // Update in wheel editor
       wheelEditor.updateWedgePublic(targetWedge.id, {
         label: 'Concurrent Update 1',
-        weight: 5.0
+        weight: 5.0,
       });
       
       // Update in wedge editor (simulating different user action)
@@ -446,7 +446,7 @@ describe('Editor Integration Tests', () => {
         id: targetWedge.id,
         label: 'Concurrent Update 2',
         weight: targetWedge.weight,
-        color: '#concurrent'
+        color: '#concurrent',
       };
       wedgeEditor.setWedge(updatedWedge);
       
@@ -478,7 +478,7 @@ describe('Editor Integration Tests', () => {
       // Create invalid state
       wheelEditor.updateWedgePublic(wheelEditor.getWedges()[0]?.id || 'invalid', {
         label: '',
-        weight: -1
+        weight: -1,
       });
       
       // Validation should fail
@@ -488,7 +488,7 @@ describe('Editor Integration Tests', () => {
       // Fix the errors
       wheelEditor.updateWedgePublic(wheelEditor.getWedges()[0]?.id || 'invalid', {
         label: 'Fixed Label',
-        weight: 1
+        weight: 1,
       });
       
       // Validation should now pass

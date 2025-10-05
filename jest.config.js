@@ -15,7 +15,15 @@ module.exports = {
     '!src/index.ts',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
+  coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
+  coverageThreshold: {
+    global: {
+      branches: 75,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    }
+  },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
@@ -24,6 +32,7 @@ module.exports = {
     '^@/models/(.*)$': '<rootDir>/src/models/$1',
     '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
     '^@/managers/(.*)$': '<rootDir>/src/managers/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   extensionsToTreatAsEsm: ['.ts'],
   globals: {
@@ -31,5 +40,36 @@ module.exports = {
       useESM: true
     }
   },
-  testTimeout: 10000,
+  testTimeout: 30000, // Increased for performance tests
+  maxWorkers: '50%', // Use half of available CPU cores
+  projects: [
+    {
+      displayName: 'unit',
+      testMatch: ['<rootDir>/tests/components/**/*.test.ts', '<rootDir>/tests/engines/**/*.test.ts', '<rootDir>/tests/managers/**/*.test.ts', '<rootDir>/tests/utils/**/*.test.ts'],
+      testEnvironment: 'jsdom'
+    },
+    {
+      displayName: 'integration',
+      testMatch: ['<rootDir>/tests/integration/**/*.test.ts'],
+      testEnvironment: 'jsdom'
+    },
+    {
+      displayName: 'e2e',
+      testMatch: ['<rootDir>/tests/e2e/**/*.test.ts'],
+      testEnvironment: 'jsdom',
+      testTimeout: 60000
+    },
+    {
+      displayName: 'performance',
+      testMatch: ['<rootDir>/tests/performance/**/*.test.ts'],
+      testEnvironment: 'jsdom',
+      testTimeout: 120000
+    },
+    {
+      displayName: 'statistical',
+      testMatch: ['<rootDir>/tests/statistical/**/*.test.ts'],
+      testEnvironment: 'jsdom',
+      testTimeout: 180000
+    }
+  ]
 };

@@ -253,7 +253,7 @@ describe('PlayerManager', () => {
       
       const shouldEnd = playerManager.shouldGameEnd({ 
         roundLimit: 5, 
-        scoreLimit: 50 
+        scoreLimit: 50, 
       });
       expect(shouldEnd).toBe(false);
     });

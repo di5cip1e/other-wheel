@@ -53,7 +53,7 @@ export class WedgeSelector {
     return {
       wedge: selectedWedge,
       index: selectedIndex,
-      probability
+      probability,
     };
   }
 
@@ -96,7 +96,7 @@ export class WedgeSelector {
 
     // Calculate differences between probability weights and visual representation
     const probabilityVsVisualDifferences = probabilities.map((prob, i) => 
-      Math.abs(prob - visualProbabilities[i]!)
+      Math.abs(prob - visualProbabilities[i]!),
     );
 
     const maxDeviation = Math.max(...probabilityVsVisualDifferences);
@@ -108,7 +108,7 @@ export class WedgeSelector {
       visualAngles,
       probabilityVsVisualDifferences,
       isBalanced,
-      maxDeviation
+      maxDeviation,
     };
   }
 
@@ -135,7 +135,7 @@ export class WedgeSelector {
     wedges: Wedge[], 
     samples: number = 10000, 
     tolerance: number = 0.05,
-    seed?: number
+    seed?: number,
   ): {
     passed: boolean;
     actualProbabilities: number[];
@@ -166,7 +166,7 @@ export class WedgeSelector {
     // Calculate actual probabilities and deviations
     const actualProbabilities = counts.map(count => count / samples);
     const deviations = actualProbabilities.map((actual, i) => 
-      Math.abs(actual - expectedProbabilities[i]!)
+      Math.abs(actual - expectedProbabilities[i]!),
     );
     
     const maxDeviation = Math.max(...deviations);
@@ -183,7 +183,7 @@ export class WedgeSelector {
       expectedProbabilities,
       deviations,
       maxDeviation,
-      sampleCount: samples
+      sampleCount: samples,
     };
   }
 
@@ -229,7 +229,7 @@ export class WedgeSelector {
         visualWeight,
         difference,
         severity,
-        recommendation
+        recommendation,
       };
     });
   }

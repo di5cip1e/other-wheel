@@ -14,8 +14,8 @@ jest.mock('../../src/managers/MediaManager', () => ({
     getSupportedTypes: jest.fn(),
     createMediaFromFile: jest.fn(),
     clearCache: jest.fn(),
-    getCacheStats: jest.fn()
-  }
+    getCacheStats: jest.fn(),
+  },
 }));
 
 const mockMediaManager = mediaManager as jest.Mocked<typeof mediaManager>;
@@ -28,7 +28,7 @@ const mockContainer = {
   appendChild: jest.fn(),
   removeChild: jest.fn(),
   querySelector: jest.fn(),
-  parentElement: null as HTMLElement | null
+  parentElement: null as HTMLElement | null,
 };
 
 // Mock createElement
@@ -51,11 +51,11 @@ const mockElements = new Map<string, any>();
       controls: false,
       muted: false,
       autoplay: false,
-      loop: false
+      loop: false,
     };
     mockElements.set(tagName, element);
     return element;
-  })
+  }),
 };
 
 describe('MediaViewer', () => {
@@ -90,7 +90,7 @@ describe('MediaViewer', () => {
         showControls: false,
         autoplay: true,
         fallbackText: 'Custom fallback',
-        className: 'custom-viewer'
+        className: 'custom-viewer',
       };
 
       mediaViewer = new MediaViewer(container, options);
@@ -119,14 +119,14 @@ describe('MediaViewer', () => {
       const media: WedgeMedia = {
         type: 'image',
         src: 'https://example.com/image.jpg',
-        alt: 'Test image'
+        alt: 'Test image',
       };
 
       const mockImage = { tagName: 'IMG', src: media.src, alt: media.alt };
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: mockImage as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       await mediaViewer.displayMedia(media);
@@ -138,7 +138,7 @@ describe('MediaViewer', () => {
     test('should display video media successfully', async () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/video.mp4'
+        src: 'https://example.com/video.mp4',
       };
 
       const mockVideo = { 
@@ -147,12 +147,12 @@ describe('MediaViewer', () => {
         controls: false,
         muted: false,
         autoplay: false,
-        play: jest.fn(() => Promise.resolve())
+        play: jest.fn(() => Promise.resolve()),
       };
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: mockVideo as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       await mediaViewer.displayMedia(media);
@@ -165,13 +165,13 @@ describe('MediaViewer', () => {
       const media: WedgeMedia = {
         type: 'image',
         src: 'https://example.com/invalid.jpg',
-        alt: 'Failed image'
+        alt: 'Failed image',
       };
 
       mockMediaManager.loadMedia.mockResolvedValue({
         success: false,
         error: 'Failed to load image',
-        fallbackUsed: true
+        fallbackUsed: true,
       });
 
       await mediaViewer.displayMedia(media);
@@ -192,7 +192,7 @@ describe('MediaViewer', () => {
     test('should handle media loading exception', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/error.jpg'
+        src: 'https://example.com/error.jpg',
       };
 
       mockMediaManager.loadMedia.mockRejectedValue(new Error('Network error'));
@@ -207,7 +207,7 @@ describe('MediaViewer', () => {
     test('should show loading state during media load', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/slow-image.jpg'
+        src: 'https://example.com/slow-image.jpg',
       };
 
       // Create a promise that we can control
@@ -227,7 +227,7 @@ describe('MediaViewer', () => {
       resolveLoad!({
         success: true,
         element: { tagName: 'IMG' } as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       await displayPromise;
@@ -258,13 +258,13 @@ describe('MediaViewer', () => {
     test('should track current media', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/track-test.jpg'
+        src: 'https://example.com/track-test.jpg',
       };
 
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: { tagName: 'IMG' } as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       await mediaViewer.displayMedia(media);
@@ -276,19 +276,19 @@ describe('MediaViewer', () => {
     test('should handle video pause on clear', async () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/pause-test.mp4'
+        src: 'https://example.com/pause-test.mp4',
       };
 
       const mockVideo = {
         tagName: 'VIDEO',
         pause: jest.fn(),
-        play: jest.fn(() => Promise.resolve())
+        play: jest.fn(() => Promise.resolve()),
       };
 
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: mockVideo as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       await mediaViewer.displayMedia(media);
@@ -303,14 +303,14 @@ describe('MediaViewer', () => {
     beforeEach(() => {
       mediaViewer = new MediaViewer(container, {
         showControls: true,
-        autoplay: true
+        autoplay: true,
       });
     });
 
     test('should configure video controls', async () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/controls-test.mp4'
+        src: 'https://example.com/controls-test.mp4',
       };
 
       const mockVideo = {
@@ -319,13 +319,13 @@ describe('MediaViewer', () => {
         muted: false,
         autoplay: false,
         play: jest.fn(() => Promise.resolve()),
-        cloneNode: jest.fn(function(this: any) { return { ...this }; })
+        cloneNode: jest.fn(function(this: any) { return { ...this }; }),
       };
 
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: mockVideo as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       await mediaViewer.displayMedia(media);
@@ -340,7 +340,7 @@ describe('MediaViewer', () => {
     test('should handle autoplay failure gracefully', async () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/autoplay-fail.mp4'
+        src: 'https://example.com/autoplay-fail.mp4',
       };
 
       const mockVideo = {
@@ -349,13 +349,13 @@ describe('MediaViewer', () => {
         muted: false,
         autoplay: false,
         play: jest.fn(() => Promise.reject(new Error('Autoplay blocked'))),
-        cloneNode: jest.fn(function(this: any) { return { ...this }; })
+        cloneNode: jest.fn(function(this: any) { return { ...this }; }),
       };
 
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: mockVideo as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       // Should not throw even if autoplay fails
@@ -374,18 +374,18 @@ describe('MediaViewer', () => {
     test('should display media temporarily', async () => {
       const parentElement = {
         appendChild: jest.fn(),
-        removeChild: jest.fn()
+        removeChild: jest.fn(),
       } as any;
 
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/temp.jpg'
+        src: 'https://example.com/temp.jpg',
       };
 
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: { tagName: 'IMG' } as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       // Mock setTimeout for testing
@@ -408,18 +408,18 @@ describe('MediaViewer', () => {
     test('should handle temporary display without duration', async () => {
       const parentElement = {
         appendChild: jest.fn(),
-        removeChild: jest.fn()
+        removeChild: jest.fn(),
       } as any;
 
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/no-duration.jpg'
+        src: 'https://example.com/no-duration.jpg',
       };
 
       mockMediaManager.loadMedia.mockResolvedValue({
         success: true,
         element: { tagName: 'IMG' } as any,
-        fallbackUsed: false
+        fallbackUsed: false,
       });
 
       await displayMediaTemporary(media, parentElement);
@@ -440,7 +440,7 @@ describe('MediaViewer', () => {
 
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/console-error.jpg'
+        src: 'https://example.com/console-error.jpg',
       };
 
       mockMediaManager.loadMedia.mockRejectedValue(new Error('Test error'));

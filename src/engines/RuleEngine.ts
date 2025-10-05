@@ -4,7 +4,7 @@ import {
   RuleEvaluationContext, 
   RuleEvaluationResult, 
   RuleValidationError, 
-  RuleConflict
+  RuleConflict,
 } from '../models/Rule';
 
 /**
@@ -89,7 +89,7 @@ export class RuleEngine {
    */
   private evaluateRule(rule: Rule, context: RuleEvaluationContext): RuleEvaluationResult {
     const conditionResults = rule.conditions.map(condition => 
-      this.evaluateCondition(condition, context)
+      this.evaluateCondition(condition, context),
     );
 
     // Combine condition results based on operators
@@ -99,7 +99,7 @@ export class RuleEngine {
       ruleId: rule.id,
       ruleName: rule.name,
       triggered,
-      priority: rule.priority
+      priority: rule.priority,
     };
 
     if (triggered) {
@@ -120,24 +120,24 @@ export class RuleEngine {
    */
   private evaluateCondition(condition: RuleCondition, context: RuleEvaluationContext): boolean {
     switch (condition.type) {
-      case 'specific_wedge':
-        return this.evaluateSpecificWedge(condition, context);
+    case 'specific_wedge':
+      return this.evaluateSpecificWedge(condition, context);
       
-      case 'wedge_combination':
-        return this.evaluateWedgeCombination(condition, context);
+    case 'wedge_combination':
+      return this.evaluateWedgeCombination(condition, context);
       
-      case 'score_threshold':
-        return this.evaluateScoreThreshold(condition, context);
+    case 'score_threshold':
+      return this.evaluateScoreThreshold(condition, context);
       
-      case 'consecutive_wins':
-        return this.evaluateConsecutiveWins(condition, context);
+    case 'consecutive_wins':
+      return this.evaluateConsecutiveWins(condition, context);
       
-      case 'avoid_wedge':
-        return this.evaluateAvoidWedge(condition, context);
+    case 'avoid_wedge':
+      return this.evaluateAvoidWedge(condition, context);
       
-      default:
-        console.warn(`Unknown condition type: ${condition.type}`);
-        return false;
+    default:
+      console.warn(`Unknown condition type: ${condition.type}`);
+      return false;
     }
   }
 
@@ -188,14 +188,14 @@ export class RuleEngine {
     const { threshold, operator } = condition.parameters;
     
     switch (operator) {
-      case 'gte':
-        return context.playerScore >= threshold;
-      case 'lte':
-        return context.playerScore <= threshold;
-      case 'eq':
-        return context.playerScore === threshold;
-      default:
-        return false;
+    case 'gte':
+      return context.playerScore >= threshold;
+    case 'lte':
+      return context.playerScore <= threshold;
+    case 'eq':
+      return context.playerScore === threshold;
+    default:
+      return false;
     }
   }
 
@@ -240,29 +240,29 @@ export class RuleEngine {
    * Combine condition results based on operators
    */
   private combineConditionResults(results: boolean[], conditions: RuleCondition[]): boolean {
-    if (results.length === 0) return false;
-    if (results.length === 1) return results[0] || false;
+    if (results.length === 0) {return false;}
+    if (results.length === 1) {return results[0] || false;}
 
     // Default to AND operation if no operators specified
     let combinedResult = results[0] || false;
     
     for (let i = 1; i < results.length; i++) {
       const condition = conditions[i];
-      if (!condition) continue;
+      if (!condition) {continue;}
       
       const operator = condition.operator || 'AND';
       const currentResult = results[i] || false;
       
       switch (operator) {
-        case 'AND':
-          combinedResult = combinedResult && currentResult;
-          break;
-        case 'OR':
-          combinedResult = combinedResult || currentResult;
-          break;
-        case 'NOT':
-          combinedResult = combinedResult && !currentResult;
-          break;
+      case 'AND':
+        combinedResult = combinedResult && currentResult;
+        break;
+      case 'OR':
+        combinedResult = combinedResult || currentResult;
+        break;
+      case 'NOT':
+        combinedResult = combinedResult && !currentResult;
+        break;
       }
     }
     
@@ -281,7 +281,7 @@ export class RuleEngine {
         ruleId: rule.id,
         field: 'id',
         message: 'Rule ID is required',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
@@ -290,7 +290,7 @@ export class RuleEngine {
         ruleId: rule.id,
         field: 'name',
         message: 'Rule name is required',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
@@ -299,7 +299,7 @@ export class RuleEngine {
         ruleId: rule.id,
         field: 'priority',
         message: 'Priority must be between 0 and 100',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
@@ -308,7 +308,7 @@ export class RuleEngine {
         ruleId: rule.id,
         field: 'conditions',
         message: 'Rule must have at least one condition',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
@@ -333,80 +333,80 @@ export class RuleEngine {
         ruleId,
         field: `${fieldPrefix}.id`,
         message: 'Condition ID is required',
-        severity: 'error'
+        severity: 'error',
       });
     }
 
     // Validate condition-specific parameters
     switch (condition.type) {
-      case 'specific_wedge':
-      case 'avoid_wedge':
-        if (!condition.parameters['wedgeId']) {
-          errors.push({
-            ruleId,
-            field: `${fieldPrefix}.parameters.wedgeId`,
-            message: 'Wedge ID is required for this condition type',
-            severity: 'error'
-          });
-        }
-        if (!['outer', 'inner', 'both'].includes(condition.parameters['wheel'])) {
-          errors.push({
-            ruleId,
-            field: `${fieldPrefix}.parameters.wheel`,
-            message: 'Wheel must be "outer", "inner", or "both"',
-            severity: 'error'
-          });
-        }
-        break;
+    case 'specific_wedge':
+    case 'avoid_wedge':
+      if (!condition.parameters['wedgeId']) {
+        errors.push({
+          ruleId,
+          field: `${fieldPrefix}.parameters.wedgeId`,
+          message: 'Wedge ID is required for this condition type',
+          severity: 'error',
+        });
+      }
+      if (!['outer', 'inner', 'both'].includes(condition.parameters['wheel'])) {
+        errors.push({
+          ruleId,
+          field: `${fieldPrefix}.parameters.wheel`,
+          message: 'Wheel must be "outer", "inner", or "both"',
+          severity: 'error',
+        });
+      }
+      break;
 
-      case 'wedge_combination':
-        if (!condition.parameters['outerWedgeId'] || !condition.parameters['innerWedgeId']) {
-          errors.push({
-            ruleId,
-            field: `${fieldPrefix}.parameters`,
-            message: 'Both outer and inner wedge IDs are required',
-            severity: 'error'
-          });
-        }
-        if (!['exact', 'any'].includes(condition.parameters['matchType'])) {
-          errors.push({
-            ruleId,
-            field: `${fieldPrefix}.parameters.matchType`,
-            message: 'Match type must be "exact" or "any"',
-            severity: 'error'
-          });
-        }
-        break;
+    case 'wedge_combination':
+      if (!condition.parameters['outerWedgeId'] || !condition.parameters['innerWedgeId']) {
+        errors.push({
+          ruleId,
+          field: `${fieldPrefix}.parameters`,
+          message: 'Both outer and inner wedge IDs are required',
+          severity: 'error',
+        });
+      }
+      if (!['exact', 'any'].includes(condition.parameters['matchType'])) {
+        errors.push({
+          ruleId,
+          field: `${fieldPrefix}.parameters.matchType`,
+          message: 'Match type must be "exact" or "any"',
+          severity: 'error',
+        });
+      }
+      break;
 
-      case 'score_threshold':
-        if (typeof condition.parameters['threshold'] !== 'number') {
-          errors.push({
-            ruleId,
-            field: `${fieldPrefix}.parameters.threshold`,
-            message: 'Threshold must be a number',
-            severity: 'error'
-          });
-        }
-        if (!['gte', 'lte', 'eq'].includes(condition.parameters['operator'])) {
-          errors.push({
-            ruleId,
-            field: `${fieldPrefix}.parameters.operator`,
-            message: 'Operator must be "gte", "lte", or "eq"',
-            severity: 'error'
-          });
-        }
-        break;
+    case 'score_threshold':
+      if (typeof condition.parameters['threshold'] !== 'number') {
+        errors.push({
+          ruleId,
+          field: `${fieldPrefix}.parameters.threshold`,
+          message: 'Threshold must be a number',
+          severity: 'error',
+        });
+      }
+      if (!['gte', 'lte', 'eq'].includes(condition.parameters['operator'])) {
+        errors.push({
+          ruleId,
+          field: `${fieldPrefix}.parameters.operator`,
+          message: 'Operator must be "gte", "lte", or "eq"',
+          severity: 'error',
+        });
+      }
+      break;
 
-      case 'consecutive_wins':
-        if (!Number.isInteger(condition.parameters['count']) || condition.parameters['count'] < 1) {
-          errors.push({
-            ruleId,
-            field: `${fieldPrefix}.parameters.count`,
-            message: 'Count must be a positive integer',
-            severity: 'error'
-          });
-        }
-        break;
+    case 'consecutive_wins':
+      if (!Number.isInteger(condition.parameters['count']) || condition.parameters['count'] < 1) {
+        errors.push({
+          ruleId,
+          field: `${fieldPrefix}.parameters.count`,
+          message: 'Count must be a positive integer',
+          severity: 'error',
+        });
+      }
+      break;
     }
 
     return errors;
@@ -424,7 +424,7 @@ export class RuleEngine {
         const rule1 = rules[i];
         const rule2 = rules[j];
         
-        if (!rule1 || !rule2) continue;
+        if (!rule1 || !rule2) {continue;}
         
         // Check for contradictory outcomes with same priority
         if (rule1.priority === rule2.priority && 
@@ -435,7 +435,7 @@ export class RuleEngine {
             rule2Id: rule2.id,
             conflictType: 'contradictory_outcomes',
             description: `Rules have same priority but contradictory outcomes: ${rule1.outcome} vs ${rule2.outcome}`,
-            severity: 'error'
+            severity: 'error',
           });
         }
       }

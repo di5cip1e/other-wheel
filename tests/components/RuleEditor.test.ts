@@ -5,12 +5,12 @@ import { Rule, Wheel } from '../../src/models';
 // Mock DOM methods
 Object.defineProperty(window, 'confirm', {
   writable: true,
-  value: jest.fn(() => true)
+  value: jest.fn(() => true),
 });
 
 Object.defineProperty(window, 'alert', {
   writable: true,
-  value: jest.fn()
+  value: jest.fn(),
 });
 
 describe('RuleEditor', () => {
@@ -362,8 +362,8 @@ describe('RuleEditor', () => {
           radius: 100,
           position: { x: 0, y: 0 },
           currentAngle: 0,
-          angularVelocity: 0
-        }
+          angularVelocity: 0,
+        },
       ];
       
       ruleEditor.updateWheels(newWheels);
@@ -384,35 +384,35 @@ describe('RuleEditor', () => {
         label: 'Outer Wheel',
         wedges: [
           { id: 'wedge1', label: 'Red', weight: 1, color: '#ff0000' },
-          { id: 'wedge2', label: 'Blue', weight: 1, color: '#0000ff' }
+          { id: 'wedge2', label: 'Blue', weight: 1, color: '#0000ff' },
         ],
         frictionCoefficient: 0.1,
         radius: 150,
         position: { x: 0, y: 0 },
         currentAngle: 0,
-        angularVelocity: 0
+        angularVelocity: 0,
       },
       {
         id: 'wheel2',
         label: 'Inner Wheel',
         wedges: [
           { id: 'wedge3', label: 'Green', weight: 1, color: '#00ff00' },
-          { id: 'wedge4', label: 'Yellow', weight: 1, color: '#ffff00' }
+          { id: 'wedge4', label: 'Yellow', weight: 1, color: '#ffff00' },
         ],
         frictionCoefficient: 0.1,
         clutchRatio: 0.5,
         radius: 75,
         position: { x: 0, y: 0 },
         currentAngle: 0,
-        angularVelocity: 0
-      }
+        angularVelocity: 0,
+      },
     ];
   }
 
   function createTestRule(
     id: string = 'test-rule',
     priority: number = 50,
-    outcome: 'win' | 'lose' | 'continue' = 'continue'
+    outcome: 'win' | 'lose' | 'continue' = 'continue',
   ): Rule {
     return {
       id,
@@ -423,13 +423,13 @@ describe('RuleEditor', () => {
       conditions: [{
         id: 'cond1',
         type: 'specific_wedge',
-        parameters: { wedgeId: 'wedge1', wheel: 'outer' }
+        parameters: { wedgeId: 'wedge1', wheel: 'outer' },
       }],
       outcome,
       points: 10,
       message: 'Test message',
       createdAt: '2023-01-01T00:00:00Z',
-      modifiedAt: '2023-01-01T00:00:00Z'
+      modifiedAt: '2023-01-01T00:00:00Z',
     };
   }
 

@@ -26,7 +26,7 @@ export class ThemeControls {
     container: HTMLElement,
     audioEngine: AudioEngine,
     themeEngine: ThemeEngine,
-    config: ThemeControlsConfig = this.getDefaultConfig()
+    config: ThemeControlsConfig = this.getDefaultConfig(),
   ) {
     this.container = container;
     this.audioEngine = audioEngine;
@@ -44,7 +44,7 @@ export class ThemeControls {
       showThemeSelector: true,
       showAudioToggle: true,
       showAnimationToggle: true,
-      compact: false
+      compact: false,
     };
   }
 
@@ -296,7 +296,7 @@ export class ThemeControls {
 
   private async testAudio(): Promise<void> {
     const currentTheme = this.audioEngine.getCurrentTheme();
-    if (!currentTheme) return;
+    if (!currentTheme) {return;}
 
     // Resume audio context if needed
     await this.audioEngine.resumeAudioContext();
@@ -307,7 +307,7 @@ export class ThemeControls {
       currentTheme.soundEffects.powerMeterTick,
       currentTheme.soundEffects.wheelSpin,
       currentTheme.soundEffects.wheelStop,
-      currentTheme.soundEffects.resultReveal
+      currentTheme.soundEffects.resultReveal,
     ];
 
     for (let i = 0; i < sounds.length; i++) {

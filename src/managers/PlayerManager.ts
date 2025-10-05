@@ -50,7 +50,7 @@ export class PlayerManager {
     const player: Player = {
       id: `player-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: name.trim(),
-      isActive: this.players.length === 0 // First player is active
+      isActive: this.players.length === 0, // First player is active
     };
 
     if (avatarUrl) {
@@ -61,7 +61,7 @@ export class PlayerManager {
     this.scores.set(player.id, {
       playerId: player.id,
       score: 0,
-      roundsPlayed: 0
+      roundsPlayed: 0,
     });
 
     return player;
@@ -158,7 +158,7 @@ export class PlayerManager {
       playerId: currentPlayer.id,
       result,
       score: scoreChange,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.turnHistory.push(turnResult);
@@ -206,7 +206,7 @@ export class PlayerManager {
       outerWedgeId: 'unknown', // Would need to store this in turn result
       innerWedgeId: 'unknown', // Would need to store this in turn result
       points: turn.score,
-      timestamp: new Date(turn.timestamp).toISOString()
+      timestamp: new Date(turn.timestamp).toISOString(),
     }));
   }
 
@@ -274,7 +274,7 @@ export class PlayerManager {
       scores: Array.from(this.scores.entries()),
       currentPlayerIndex: this.currentPlayerIndex,
       turnHistory: this.turnHistory,
-      roundNumber: this.roundNumber
+      roundNumber: this.roundNumber,
     };
   }
 

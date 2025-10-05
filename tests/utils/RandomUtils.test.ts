@@ -6,7 +6,7 @@ import {
   LCGRandom, 
   WeightedSelector, 
   DeterministicRNG, 
-  StatisticalUtils 
+  StatisticalUtils, 
 } from '../../src/utils/RandomUtils';
 
 describe('LCGRandom', () => {
@@ -109,13 +109,13 @@ describe('WeightedSelector', () => {
       const weights = [1, 2, 3]; // C should be selected most often
 
       const results = Array.from({ length: 1000 }, () => 
-        selector.select(items, weights)
+        selector.select(items, weights),
       );
 
       const counts = {
         A: results.filter(r => r === 'A').length,
         B: results.filter(r => r === 'B').length,
-        C: results.filter(r => r === 'C').length
+        C: results.filter(r => r === 'C').length,
       };
 
       // C should have highest count, A should have lowest
@@ -128,13 +128,13 @@ describe('WeightedSelector', () => {
       const weights = [1, 1, 1];
 
       const results = Array.from({ length: 1000 }, () => 
-        selector.select(items, weights)
+        selector.select(items, weights),
       );
 
       const counts = {
         A: results.filter(r => r === 'A').length,
         B: results.filter(r => r === 'B').length,
-        C: results.filter(r => r === 'C').length
+        C: results.filter(r => r === 'C').length,
       };
 
       // Should be roughly equal (within 20% tolerance)
@@ -151,7 +151,7 @@ describe('WeightedSelector', () => {
       const weights = [0, 1, 0]; // Only B should be selected
 
       const results = Array.from({ length: 100 }, () => 
-        selector.select(items, weights)
+        selector.select(items, weights),
       );
 
       expect(results.every(r => r === 'B')).toBe(true);
@@ -167,10 +167,10 @@ describe('WeightedSelector', () => {
       const selector2 = new WeightedSelector(rng2);
 
       const results1 = Array.from({ length: 10 }, () => 
-        selector1.select(items, weights)
+        selector1.select(items, weights),
       );
       const results2 = Array.from({ length: 10 }, () => 
-        selector2.select(items, weights)
+        selector2.select(items, weights),
       );
 
       expect(results1).toEqual(results2);
@@ -182,7 +182,7 @@ describe('WeightedSelector', () => {
       const weights = [1, 0, 3]; // Index 2 should be selected most, index 1 never
 
       const results = Array.from({ length: 1000 }, () => 
-        selector.selectIndex(weights)
+        selector.selectIndex(weights),
       );
 
       const counts = [0, 0, 0];
@@ -264,12 +264,12 @@ describe('DeterministicRNG', () => {
     test('should generate consistent integer sequences', () => {
       DeterministicRNG.setSeed(12345);
       const sequence1 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.nextInt(1, 100)
+        DeterministicRNG.nextInt(1, 100),
       );
 
       DeterministicRNG.setSeed(12345);
       const sequence2 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.nextInt(1, 100)
+        DeterministicRNG.nextInt(1, 100),
       );
 
       expect(sequence1).toEqual(sequence2);
@@ -278,12 +278,12 @@ describe('DeterministicRNG', () => {
     test('should generate consistent float sequences', () => {
       DeterministicRNG.setSeed(12345);
       const sequence1 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.nextFloat(0.0, 10.0)
+        DeterministicRNG.nextFloat(0.0, 10.0),
       );
 
       DeterministicRNG.setSeed(12345);
       const sequence2 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.nextFloat(0.0, 10.0)
+        DeterministicRNG.nextFloat(0.0, 10.0),
       );
 
       expect(sequence1).toEqual(sequence2);
@@ -295,12 +295,12 @@ describe('DeterministicRNG', () => {
 
       DeterministicRNG.setSeed(12345);
       const results1 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.selectWeighted(items, weights)
+        DeterministicRNG.selectWeighted(items, weights),
       );
 
       DeterministicRNG.setSeed(12345);
       const results2 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.selectWeighted(items, weights)
+        DeterministicRNG.selectWeighted(items, weights),
       );
 
       expect(results1).toEqual(results2);
@@ -311,12 +311,12 @@ describe('DeterministicRNG', () => {
 
       DeterministicRNG.setSeed(12345);
       const results1 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.selectWeightedIndex(weights)
+        DeterministicRNG.selectWeightedIndex(weights),
       );
 
       DeterministicRNG.setSeed(12345);
       const results2 = Array.from({ length: 10 }, () => 
-        DeterministicRNG.selectWeightedIndex(weights)
+        DeterministicRNG.selectWeightedIndex(weights),
       );
 
       expect(results1).toEqual(results2);
@@ -332,7 +332,7 @@ describe('StatisticalUtils', () => {
         weights, 
         10000, 
         0.05, 
-        12345
+        12345,
       );
 
       expect(result.passed).toBe(true);
@@ -347,7 +347,7 @@ describe('StatisticalUtils', () => {
         weights, 
         100, // Small sample size for higher variance
         0.01, // Very tight tolerance
-        12345
+        12345,
       );
 
       // With small sample size and tight tolerance, might fail
@@ -361,7 +361,7 @@ describe('StatisticalUtils', () => {
         weights, 
         1000, 
         0.05, 
-        12345
+        12345,
       );
 
       expect(result.passed).toBe(true);
@@ -374,10 +374,10 @@ describe('StatisticalUtils', () => {
       const weights = [1, 2, 3];
       
       const result1 = StatisticalUtils.testWeightedDistribution(
-        weights, 1000, 0.05, 12345
+        weights, 1000, 0.05, 12345,
       );
       const result2 = StatisticalUtils.testWeightedDistribution(
-        weights, 1000, 0.05, 12345
+        weights, 1000, 0.05, 12345,
       );
 
       expect(result1.results).toEqual(result2.results);
@@ -405,7 +405,7 @@ describe('StatisticalUtils', () => {
         weights, 
         30000, // Large sample size
         0.02,  // Reasonable tolerance
-        12345
+        12345,
       );
 
       expect(result.passed).toBe(true);
@@ -422,7 +422,7 @@ describe('StatisticalUtils', () => {
         weights, 
         10000, 
         0.05, 
-        12345
+        12345,
       );
 
       expect(result.passed).toBe(true);

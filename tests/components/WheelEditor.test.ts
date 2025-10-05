@@ -14,7 +14,7 @@ const mockContainer = {
   appendChild: jest.fn(),
   id: 'test-editor',
   querySelectorAll: jest.fn(() => []),
-  querySelector: jest.fn(() => null)
+  querySelector: jest.fn(() => null),
 } as unknown as HTMLElement;
 
 const mockElement = {
@@ -27,7 +27,7 @@ const mockElement = {
   onchange: null as any,
   dataset: {},
   querySelectorAll: jest.fn(() => []),
-  querySelector: jest.fn(() => null)
+  querySelector: jest.fn(() => null),
 } as unknown as HTMLElement;
 
 const mockInput = {
@@ -43,15 +43,15 @@ const mockInput = {
   onchange: null as any,
   classList: {
     add: jest.fn(),
-    remove: jest.fn()
-  }
+    remove: jest.fn(),
+  },
 } as unknown as HTMLInputElement;
 
 // Mock document.getElementById
 const originalGetElementById = document.getElementById;
 beforeAll(() => {
   document.getElementById = jest.fn((id: string) => {
-    if (id === 'test-editor') return mockContainer;
+    if (id === 'test-editor') {return mockContainer;}
     return null;
   });
 });
@@ -72,14 +72,14 @@ beforeAll(() => {
         ...mockElement,
         textContent: '',
         onclick: null,
-        type: 'button'
+        type: 'button',
       } as unknown as HTMLElement;
     }
     if (tagName === 'select') {
       return {
         ...mockElement,
         onchange: null,
-        value: ''
+        value: '',
       } as unknown as HTMLElement;
     }
     return { ...mockElement } as unknown as HTMLElement;
@@ -105,14 +105,14 @@ describe('WheelEditor', () => {
         { id: 'wedge-1', label: 'A', weight: 1, color: '#ff6b6b' },
         { id: 'wedge-2', label: 'B', weight: 1, color: '#4ecdc4' },
         { id: 'wedge-3', label: 'C', weight: 1, color: '#45b7d1' },
-        { id: 'wedge-4', label: 'D', weight: 1, color: '#96ceb4' }
+        { id: 'wedge-4', label: 'D', weight: 1, color: '#96ceb4' },
       ],
       frictionCoefficient: 0.02,
       clutchRatio: 0.8,
       radius: 150,
       position: { x: 0, y: 0 },
       currentAngle: 0,
-      angularVelocity: 0
+      angularVelocity: 0,
     };
     
     mockCallbacks = {
@@ -120,12 +120,12 @@ describe('WheelEditor', () => {
       onWedgeRemove: jest.fn(),
       onWedgeUpdate: jest.fn(),
       onWheelUpdate: jest.fn(),
-      onPreviewUpdate: jest.fn()
+      onPreviewUpdate: jest.fn(),
     };
     
     wheelEditor = new WheelEditor({
       containerId: 'test-editor',
-      wheel: testWheel
+      wheel: testWheel,
     }, mockCallbacks);
   });
 
@@ -137,8 +137,8 @@ describe('WheelEditor', () => {
 
     it('should throw error with invalid container', () => {
       expect(() => new WheelEditor({
-        containerId: 'invalid-container'
-      })).toThrow("Container element with id 'invalid-container' not found");
+        containerId: 'invalid-container',
+      })).toThrow('Container element with id \'invalid-container\' not found');
     });
 
     it('should initialize with provided wheel', () => {
@@ -149,7 +149,7 @@ describe('WheelEditor', () => {
 
     it('should create default wheel when none provided', () => {
       const defaultEditor = new WheelEditor({
-        containerId: 'test-editor'
+        containerId: 'test-editor',
       });
       
       const wheel = defaultEditor.getWheel();
@@ -210,7 +210,7 @@ describe('WheelEditor', () => {
       wheelEditor.addWedgePublic({
         label: 'Custom Wedge',
         weight: 2.5,
-        color: '#ff0000'
+        color: '#ff0000',
       });
       
       const wedges = wheelEditor.getWedges();
@@ -225,7 +225,7 @@ describe('WheelEditor', () => {
     it('should remove a wedge by id', () => {
       const initialCount = wheelEditor.getWedgeCount();
       const wedgeToRemove = wheelEditor.getWedges()[0];
-      if (!wedgeToRemove) throw new Error('No wedge found');
+      if (!wedgeToRemove) {throw new Error('No wedge found');}
       
       const result = wheelEditor.removeWedgePublic(wedgeToRemove.id);
       
@@ -239,8 +239,8 @@ describe('WheelEditor', () => {
     it('should not remove wedge if only 2 remain', () => {
       // Remove wedges until only 2 remain
       const wedges = wheelEditor.getWedges();
-      if (wedges[0]) wheelEditor.removeWedgePublic(wedges[0].id);
-      if (wedges[1]) wheelEditor.removeWedgePublic(wedges[1].id);
+      if (wedges[0]) {wheelEditor.removeWedgePublic(wedges[0].id);}
+      if (wedges[1]) {wheelEditor.removeWedgePublic(wedges[1].id);}
       
       expect(wheelEditor.getWedgeCount()).toBe(2);
       
@@ -262,12 +262,12 @@ describe('WheelEditor', () => {
     it('should update wedge properties', () => {
       const wedges = wheelEditor.getWedges();
       const wedgeId = wedges[0]?.id;
-      if (!wedgeId) throw new Error('No wedge found');
+      if (!wedgeId) {throw new Error('No wedge found');}
       
       const result = wheelEditor.updateWedgePublic(wedgeId, {
         label: 'Updated Label',
         weight: 3.5,
-        color: '#00ff00'
+        color: '#00ff00',
       });
       
       expect(result).toBe(true);
@@ -282,7 +282,7 @@ describe('WheelEditor', () => {
 
     it('should return false for non-existent wedge id', () => {
       const result = wheelEditor.updateWedgePublic('non-existent-id', {
-        label: 'New Label'
+        label: 'New Label',
       });
       expect(result).toBe(false);
     });
@@ -337,14 +337,14 @@ describe('WheelEditor', () => {
         label: 'New Wheel',
         wedges: [
           { id: 'new-wedge-1', label: 'X', weight: 2, color: '#000000' },
-          { id: 'new-wedge-2', label: 'Y', weight: 3, color: '#ffffff' }
+          { id: 'new-wedge-2', label: 'Y', weight: 3, color: '#ffffff' },
         ],
         frictionCoefficient: 0.05,
         clutchRatio: 0.5,
         radius: 200,
         position: { x: 10, y: 20 },
         currentAngle: 45,
-        angularVelocity: 1.5
+        angularVelocity: 1.5,
       };
       
       wheelEditor.setWheel(newWheel);
@@ -395,7 +395,7 @@ describe('WheelEditor', () => {
   describe('callbacks', () => {
     it('should handle missing callbacks gracefully', () => {
       const editorWithoutCallbacks = new WheelEditor({
-        containerId: 'test-editor'
+        containerId: 'test-editor',
       });
       
       expect(editorWithoutCallbacks).toBeInstanceOf(WheelEditor);

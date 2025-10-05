@@ -10,14 +10,14 @@ const mockContainer = {
   innerHTML: '',
   style: {} as CSSStyleDeclaration,
   appendChild: jest.fn(),
-  id: 'test-power-meter'
+  id: 'test-power-meter',
 } as unknown as HTMLElement;
 
 // Mock document.getElementById
 const originalGetElementById = document.getElementById;
 beforeAll(() => {
   document.getElementById = jest.fn((id: string) => {
-    if (id === 'test-power-meter') return mockContainer;
+    if (id === 'test-power-meter') {return mockContainer;}
     return null;
   });
 });
@@ -37,7 +37,7 @@ beforeAll(() => {
       textContent: '',
       onclick: null,
       disabled: false,
-      id: ''
+      id: '',
     } as unknown as HTMLElement;
     return element;
   });
@@ -84,12 +84,12 @@ describe('PowerMeter', () => {
     mockTime = 0;
     mockCallbacks = {
       onStart: jest.fn(),
-      onStop: jest.fn()
+      onStop: jest.fn(),
     };
     
     powerMeter = new PowerMeter(
       { containerId: 'test-power-meter' },
-      mockCallbacks
+      mockCallbacks,
     );
   });
 
@@ -107,7 +107,7 @@ describe('PowerMeter', () => {
 
     it('should throw error with invalid container', () => {
       expect(() => new PowerMeter({ containerId: 'invalid-container' })).toThrow(
-        "Container element with id 'invalid-container' not found"
+        'Container element with id \'invalid-container\' not found',
       );
     });
 
@@ -148,7 +148,7 @@ describe('PowerMeter', () => {
       expect(mockCallbacks.onStop).toHaveBeenCalledWith(
         expect.any(Number), // power
         expect.any(Number), // angular velocity
-        expect.any(Number)  // timing accuracy
+        expect.any(Number),  // timing accuracy
       );
     });
 
@@ -210,7 +210,7 @@ describe('PowerMeter', () => {
         containerId: 'test-power-meter',
         powerCurve: 'linear',
         minAngularVelocity: 1.0,
-        maxAngularVelocity: 10.0
+        maxAngularVelocity: 10.0,
       });
       
       expect(linearPowerMeter.powerToAngularVelocity(0)).toBe(1.0);
@@ -225,7 +225,7 @@ describe('PowerMeter', () => {
         containerId: 'test-power-meter',
         powerCurve: 'quadratic',
         minAngularVelocity: 0.5,
-        maxAngularVelocity: 8.0
+        maxAngularVelocity: 8.0,
       });
       
       expect(quadraticPowerMeter.powerToAngularVelocity(0)).toBe(0.5);
@@ -240,7 +240,7 @@ describe('PowerMeter', () => {
         containerId: 'test-power-meter',
         powerCurve: 'cubic',
         minAngularVelocity: 1.0,
-        maxAngularVelocity: 9.0
+        maxAngularVelocity: 9.0,
       });
       
       expect(cubicPowerMeter.powerToAngularVelocity(0)).toBe(1.0);
@@ -260,7 +260,7 @@ describe('PowerMeter', () => {
     it('should support sine wave oscillation', () => {
       const sinePowerMeter = new PowerMeter({
         containerId: 'test-power-meter',
-        oscillationPattern: 'sine'
+        oscillationPattern: 'sine',
       });
       
       expect(sinePowerMeter).toBeInstanceOf(PowerMeter);
@@ -270,7 +270,7 @@ describe('PowerMeter', () => {
     it('should support triangle wave oscillation', () => {
       const trianglePowerMeter = new PowerMeter({
         containerId: 'test-power-meter',
-        oscillationPattern: 'triangle'
+        oscillationPattern: 'triangle',
       });
       
       expect(trianglePowerMeter).toBeInstanceOf(PowerMeter);
@@ -280,7 +280,7 @@ describe('PowerMeter', () => {
     it('should support sawtooth wave oscillation', () => {
       const sawtoothPowerMeter = new PowerMeter({
         containerId: 'test-power-meter',
-        oscillationPattern: 'sawtooth'
+        oscillationPattern: 'sawtooth',
       });
       
       expect(sawtoothPowerMeter).toBeInstanceOf(PowerMeter);
@@ -358,7 +358,7 @@ describe('PowerMeter', () => {
         minAngularVelocity: 1.0,
         maxAngularVelocity: 12.0,
         showTimingFeedback: true,
-        powerCurve: 'cubic'
+        powerCurve: 'cubic',
       };
       
       const enhancedPowerMeter = new PowerMeter(enhancedOptions);
@@ -372,7 +372,7 @@ describe('PowerMeter', () => {
 
     it('should use default values for optional parameters', () => {
       const minimalPowerMeter = new PowerMeter({
-        containerId: 'test-power-meter'
+        containerId: 'test-power-meter',
       });
       
       expect(minimalPowerMeter).toBeInstanceOf(PowerMeter);

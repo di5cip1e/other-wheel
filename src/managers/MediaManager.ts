@@ -40,7 +40,7 @@ export class MediaManager {
       return {
         success: false,
         error: 'No media source provided',
-        fallbackUsed: true
+        fallbackUsed: true,
       };
     }
 
@@ -50,7 +50,7 @@ export class MediaManager {
       return {
         success: true,
         element: cached.element,
-        fallbackUsed: false
+        fallbackUsed: false,
       };
     }
 
@@ -81,7 +81,7 @@ export class MediaManager {
     if (!media || !media.src) {
       return {
         isValid: false,
-        error: 'Media source is required'
+        error: 'Media source is required',
       };
     }
 
@@ -96,7 +96,7 @@ export class MediaManager {
     } catch {
       return {
         isValid: false,
-        error: 'Invalid URL format'
+        error: 'Invalid URL format',
       };
     }
 
@@ -105,7 +105,7 @@ export class MediaManager {
       return {
         isValid: false,
         error: 'URL does not appear to be an image',
-        suggestedType: this.guessTypeFromUrl(media.src)
+        suggestedType: this.guessTypeFromUrl(media.src),
       };
     }
 
@@ -113,7 +113,7 @@ export class MediaManager {
       return {
         isValid: false,
         error: 'URL does not appear to be a video',
-        suggestedType: this.guessTypeFromUrl(media.src)
+        suggestedType: this.guessTypeFromUrl(media.src),
       };
     }
 
@@ -126,7 +126,7 @@ export class MediaManager {
   getSupportedTypes(): { images: string[]; videos: string[] } {
     return {
       images: [...this.supportedImageTypes],
-      videos: [...this.supportedVideoTypes]
+      videos: [...this.supportedVideoTypes],
     };
   }
 
@@ -155,7 +155,7 @@ export class MediaManager {
     return {
       type,
       src: dataUrl,
-      alt: file.name
+      alt: file.name,
     };
   }
 
@@ -178,7 +178,7 @@ export class MediaManager {
 
     return {
       entries: this.cache.size,
-      estimatedSize
+      estimatedSize,
     };
   }
 
@@ -194,7 +194,7 @@ export class MediaManager {
         return {
           success: false,
           error: 'Unsupported media type',
-          fallbackUsed: true
+          fallbackUsed: true,
         };
       }
 
@@ -204,13 +204,13 @@ export class MediaManager {
       return {
         success: true,
         element,
-        fallbackUsed: false
+        fallbackUsed: false,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error loading media',
-        fallbackUsed: true
+        fallbackUsed: true,
       };
     }
   }
@@ -274,7 +274,7 @@ export class MediaManager {
     this.cache.set(src, {
       element,
       loadedAt: Date.now(),
-      size: estimatedSize
+      size: estimatedSize,
     });
   }
 
@@ -307,7 +307,7 @@ export class MediaManager {
     if (!match || !match[1]) {
       return {
         isValid: false,
-        error: 'Invalid data URL format'
+        error: 'Invalid data URL format',
       };
     }
 
@@ -316,14 +316,14 @@ export class MediaManager {
     if (media.type === 'image' && !this.supportedImageTypes.includes(mimeType)) {
       return {
         isValid: false,
-        error: `Unsupported image type: ${mimeType}`
+        error: `Unsupported image type: ${mimeType}`,
       };
     }
 
     if (media.type === 'video' && !this.supportedVideoTypes.includes(mimeType)) {
       return {
         isValid: false,
-        error: `Unsupported video type: ${mimeType}`
+        error: `Unsupported video type: ${mimeType}`,
       };
     }
 
@@ -343,8 +343,8 @@ export class MediaManager {
   }
 
   private guessTypeFromUrl(url: string): 'image' | 'video' | 'text' {
-    if (this.isLikelyImageUrl(url)) return 'image';
-    if (this.isLikelyVideoUrl(url)) return 'video';
+    if (this.isLikelyImageUrl(url)) {return 'image';}
+    if (this.isLikelyVideoUrl(url)) {return 'video';}
     return 'text';
   }
 

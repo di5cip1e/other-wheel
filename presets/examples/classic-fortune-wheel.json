@@ -1,0 +1,255 @@
+{
+  "id": "classic-fortune-wheel",
+  "name": "Classic Fortune Wheel",
+  "description": "Traditional carnival-style fortune wheel with prizes and multipliers",
+  "version": "1.0.0",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "modifiedAt": "2024-01-01T00:00:00Z",
+  "author": "Wheel Game Team",
+  "gameConfig": {
+    "wheels": [
+      {
+        "id": "outer",
+        "label": "Prize Wheel",
+        "wedges": [
+          {
+            "id": "prize1",
+            "label": "🎁 Small Prize",
+            "weight": 3,
+            "style": {
+              "fillColor": "#ff6b6b",
+              "strokeColor": "#d63031",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "prize2",
+            "label": "💰 Cash Prize",
+            "weight": 2,
+            "style": {
+              "fillColor": "#4ecdc4",
+              "strokeColor": "#00b894",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "prize3",
+            "label": "🏆 Grand Prize",
+            "weight": 1,
+            "style": {
+              "fillColor": "#ffd93d",
+              "strokeColor": "#fdcb6e",
+              "textColor": "#2d3436"
+            }
+          },
+          {
+            "id": "prize4",
+            "label": "🎫 Free Spin",
+            "weight": 2,
+            "style": {
+              "fillColor": "#a29bfe",
+              "strokeColor": "#6c5ce7",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "prize5",
+            "label": "🍀 Lucky Charm",
+            "weight": 2,
+            "style": {
+              "fillColor": "#fd79a8",
+              "strokeColor": "#e84393",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "prize6",
+            "label": "💎 Bonus Round",
+            "weight": 1,
+            "style": {
+              "fillColor": "#00cec9",
+              "strokeColor": "#00b894",
+              "textColor": "#ffffff"
+            }
+          },
+          {
+            "id": "prize7",
+            "label": "🎪 Try Again",
+            "weight": 4,
+            "style": {
+              "fillColor": "#fab1a0",
+              "strokeColor": "#e17055",
+              "textColor": "#2d3436"
+            }
+          },
+          {
+            "id": "prize8",
+            "label": "⭐ Special",
+            "weight": 1,
+            "style": {
+              "fillColor": "#74b9ff",
+              "strokeColor": "#0984e3",
+              "textColor": "#ffffff"
+            }
+          }
+        ],
+        "physicsProperties": {
+          "frictionCoefficient": 0.025,
+          "clutchRatio": 0,
+          "momentOfInertia": 1.0
+        },
+        "renderProperties": {
+          "radius": 250,
+          "strokeWidth": 3,
+          "showLabels": true,
+          "labelFont": "16px Arial, sans-serif"
+        }
+      },
+      {
+        "id": "inner",
+        "label": "Multiplier Wheel",
+        "wedges": [
+          {
+            "id": "mult1",
+            "label": "×1",
+            "weight": 4,
+            "style": {
+              "fillColor": "#ddd",
+              "strokeColor": "#bbb",
+              "textColor": "#333"
+            }
+          },
+          {
+            "id": "mult2",
+            "label": "×2",
+            "weight": 3,
+            "style": {
+              "fillColor": "#81ecec",
+              "strokeColor": "#00cec9",
+              "textColor": "#2d3436"
+            }
+          },
+          {
+            "id": "mult3",
+            "label": "×3",
+            "weight": 2,
+            "style": {
+              "fillColor": "#ffeaa7",
+              "strokeColor": "#fdcb6e",
+              "textColor": "#2d3436"
+            }
+          },
+          {
+            "id": "mult5",
+            "label": "×5",
+            "weight": 1,
+            "style": {
+              "fillColor": "#ff7675",
+              "strokeColor": "#d63031",
+              "textColor": "#ffffff"
+            }
+          }
+        ],
+        "physicsProperties": {
+          "frictionCoefficient": 0.03,
+          "clutchRatio": 0.6,
+          "momentOfInertia": 0.5
+        },
+        "renderProperties": {
+          "radius": 120,
+          "strokeWidth": 2,
+          "showLabels": true,
+          "labelFont": "14px Arial, sans-serif"
+        }
+      }
+    ],
+    "rules": [
+      {
+        "id": "grand-prize-rule",
+        "name": "Grand Prize Win",
+        "type": "combination",
+        "conditions": [
+          {
+            "wheelId": "outer",
+            "wedgeId": "prize3"
+          },
+          {
+            "wheelId": "inner",
+            "wedgeId": "mult5"
+          }
+        ],
+        "outcome": {
+          "type": "win",
+          "message": "🎉 MEGA JACKPOT! Grand Prize × 5! 🎉",
+          "score": 1000
+        }
+      },
+      {
+        "id": "bonus-round-rule",
+        "name": "Bonus Round Trigger",
+        "type": "specific",
+        "conditions": [
+          {
+            "wheelId": "outer",
+            "wedgeId": "prize6"
+          }
+        ],
+        "outcome": {
+          "type": "bonus",
+          "message": "💎 Bonus Round Activated! 💎",
+          "action": "trigger-bonus-game"
+        }
+      },
+      {
+        "id": "free-spin-rule",
+        "name": "Free Spin",
+        "type": "specific",
+        "conditions": [
+          {
+            "wheelId": "outer",
+            "wedgeId": "prize4"
+          }
+        ],
+        "outcome": {
+          "type": "free-spin",
+          "message": "🎫 Free Spin! Go again! 🎫",
+          "action": "grant-extra-turn"
+        }
+      }
+    ],
+    "settings": {
+      "maxPlayers": 4,
+      "roundLimit": 10,
+      "enableSound": true,
+      "theme": "carnival",
+      "deterministic": false
+    },
+    "theme": {
+      "name": "Carnival Classic",
+      "colors": {
+        "primary": "#e17055",
+        "secondary": "#fdcb6e",
+        "background": "#2d3436",
+        "text": "#ddd"
+      },
+      "fonts": {
+        "primary": "Georgia, serif",
+        "secondary": "Arial, sans-serif"
+      },
+      "effects": {
+        "sparkles": true,
+        "confetti": true,
+        "soundEffects": true
+      }
+    }
+  },
+  "metadata": {
+    "tags": ["classic", "carnival", "prizes", "multiplayer"],
+    "difficulty": "easy",
+    "playerCount": {
+      "min": 1,
+      "max": 4
+    },
+    "estimatedDuration": 15
+  }
+}

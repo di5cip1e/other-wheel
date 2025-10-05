@@ -14,7 +14,7 @@ const mockContainer = {
   appendChild: jest.fn(),
   id: 'test-wedge-editor',
   querySelectorAll: jest.fn(() => []),
-  querySelector: jest.fn(() => null)
+  querySelector: jest.fn(() => null),
 } as unknown as HTMLElement;
 
 const mockElement = {
@@ -28,7 +28,7 @@ const mockElement = {
   onerror: null as any,
   dataset: {},
   querySelectorAll: jest.fn(() => []),
-  querySelector: jest.fn(() => null)
+  querySelector: jest.fn(() => null),
 } as unknown as HTMLElement;
 
 const mockInput = {
@@ -45,9 +45,9 @@ const mockInput = {
   onchange: null as any,
   classList: {
     add: jest.fn(),
-    remove: jest.fn()
+    remove: jest.fn(),
   },
-  files: null
+  files: null,
 } as unknown as HTMLInputElement;
 
 // Mock document.getElementById
@@ -77,21 +77,21 @@ beforeAll(() => {
         ...mockElement,
         textContent: '',
         onclick: null,
-        type: 'button'
+        type: 'button',
       } as unknown as HTMLElement;
     }
     if (tagName === 'select') {
       return {
         ...mockElement,
         onchange: null,
-        value: ''
+        value: '',
       } as unknown as HTMLElement;
     }
     if (tagName === 'option') {
       return {
         ...mockElement,
         value: '',
-        selected: false
+        selected: false,
       } as unknown as HTMLElement;
     }
     if (tagName === 'img') {
@@ -99,7 +99,7 @@ beforeAll(() => {
         ...mockElement,
         src: '',
         alt: '',
-        onerror: null
+        onerror: null,
       } as unknown as HTMLElement;
     }
     if (tagName === 'video') {
@@ -107,7 +107,7 @@ beforeAll(() => {
         ...mockElement,
         src: '',
         controls: false,
-        onerror: null
+        onerror: null,
       } as unknown as HTMLElement;
     }
     return { ...mockElement } as unknown as HTMLElement;
@@ -130,18 +130,18 @@ describe('WedgeEditor', () => {
       id: 'test-wedge',
       label: 'Test Option',
       weight: 1.5,
-      color: '#ff6b6b'
+      color: '#ff6b6b',
     };
     
     mockCallbacks = {
       onWedgeUpdate: jest.fn(),
       onMediaUpload: jest.fn(),
-      onMediaValidation: jest.fn()
+      onMediaValidation: jest.fn(),
     };
     
     wedgeEditor = new WedgeEditor({
       containerId: 'test-wedge-editor',
-      wedge: testWedge
+      wedge: testWedge,
     }, mockCallbacks);
   });
 
@@ -153,8 +153,8 @@ describe('WedgeEditor', () => {
 
     it('should throw error with invalid container', () => {
       expect(() => new WedgeEditor({
-        containerId: 'invalid-container'
-      })).toThrow("Container element with id 'invalid-container' not found");
+        containerId: 'invalid-container',
+      })).toThrow('Container element with id \'invalid-container\' not found');
     });
 
     it('should initialize with provided wedge', () => {
@@ -166,7 +166,7 @@ describe('WedgeEditor', () => {
 
     it('should create default wedge when none provided', () => {
       const defaultEditor = new WedgeEditor({
-        containerId: 'test-wedge-editor'
+        containerId: 'test-wedge-editor',
       });
       
       const wedge = defaultEditor.getWedge();
@@ -204,8 +204,8 @@ describe('WedgeEditor', () => {
         media: {
           type: 'image',
           src: 'test.jpg',
-          alt: 'Test image'
-        }
+          alt: 'Test image',
+        },
       };
       
       wedgeEditor.setWedge(newWedge);
@@ -230,7 +230,7 @@ describe('WedgeEditor', () => {
         id: 'test',
         label: '',
         weight: 1,
-        color: '#ff0000'
+        color: '#ff0000',
       };
       
       wedgeEditor.setWedge(emptyLabelWedge);
@@ -245,7 +245,7 @@ describe('WedgeEditor', () => {
         id: 'test',
         label: 'A'.repeat(60), // 60 characters
         weight: 1,
-        color: '#ff0000'
+        color: '#ff0000',
       };
       
       wedgeEditor.setWedge(longLabelWedge);
@@ -260,7 +260,7 @@ describe('WedgeEditor', () => {
         id: 'test',
         label: 'Test',
         weight: -1,
-        color: '#ff0000'
+        color: '#ff0000',
       };
       
       wedgeEditor.setWedge(negativeWeightWedge);
@@ -275,7 +275,7 @@ describe('WedgeEditor', () => {
         id: 'test',
         label: 'Test',
         weight: 0,
-        color: '#ff0000'
+        color: '#ff0000',
       };
       
       wedgeEditor.setWedge(zeroWeightWedge);
@@ -294,8 +294,8 @@ describe('WedgeEditor', () => {
         media: {
           type: 'image',
           src: '',
-          alt: 'Test'
-        }
+          alt: 'Test',
+        },
       };
       
       wedgeEditor.setWedge(emptyMediaWedge);
@@ -313,8 +313,8 @@ describe('WedgeEditor', () => {
         color: '#ff0000',
         media: {
           type: 'image',
-          src: 'test.jpg'
-        }
+          src: 'test.jpg',
+        },
       };
       
       wedgeEditor.setWedge(noAltWedge);
@@ -330,7 +330,7 @@ describe('WedgeEditor', () => {
       wedgeEditor = new WedgeEditor({
         containerId: 'test-wedge-editor',
         wedge: testWedge,
-        showMediaOptions: true
+        showMediaOptions: true,
       }, mockCallbacks);
     });
 
@@ -356,7 +356,7 @@ describe('WedgeEditor', () => {
   describe('callbacks', () => {
     it('should handle missing callbacks gracefully', () => {
       const editorWithoutCallbacks = new WedgeEditor({
-        containerId: 'test-wedge-editor'
+        containerId: 'test-wedge-editor',
       });
       
       expect(editorWithoutCallbacks).toBeInstanceOf(WedgeEditor);

@@ -19,12 +19,12 @@ const localStorageMock = (() => {
     },
     clear: () => {
       store = {};
-    }
+    },
   };
 })();
 
 Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 });
 
 describe('PresetManager', () => {
@@ -42,7 +42,7 @@ describe('PresetManager', () => {
         id: 'wedge1',
         label: 'Option 1',
         weight: 1,
-        color: '#ff0000'
+        color: '#ff0000',
       },
       {
         id: 'wedge2',
@@ -52,9 +52,9 @@ describe('PresetManager', () => {
         media: {
           type: 'image',
           src: 'test.jpg',
-          alt: 'Test image'
-        }
-      }
+          alt: 'Test image',
+        },
+      },
     ];
 
     const mockWheels: Wheel[] = [
@@ -66,7 +66,7 @@ describe('PresetManager', () => {
         radius: 200,
         position: { x: 300, y: 300 },
         currentAngle: 0,
-        angularVelocity: 0
+        angularVelocity: 0,
       },
       {
         id: 'wheel2',
@@ -77,15 +77,15 @@ describe('PresetManager', () => {
         radius: 100,
         position: { x: 300, y: 300 },
         currentAngle: 0,
-        angularVelocity: 0
-      }
+        angularVelocity: 0,
+      },
     ];
 
     const mockSettings: GameSettings = {
       maxPlayers: 4,
       enableSound: true,
       theme: 'default',
-      deterministic: false
+      deterministic: false,
     };
 
     mockGameState = {
@@ -94,7 +94,7 @@ describe('PresetManager', () => {
       currentPlayerIndex: 0,
       gamePhase: 'setup',
       scores: new Map(),
-      settings: mockSettings
+      settings: mockSettings,
     };
 
     // Create mock preset
@@ -115,26 +115,26 @@ describe('PresetManager', () => {
                 id: 'wedge1',
                 label: 'Test Wedge',
                 weight: 1,
-                color: '#ff0000'
-              }
+                color: '#ff0000',
+              },
             ],
             physicsProperties: {
-              frictionCoefficient: 0.1
+              frictionCoefficient: 0.1,
             },
             renderProperties: {
               radius: 200,
-              position: { x: 300, y: 300 }
-            }
-          }
+              position: { x: 300, y: 300 },
+            },
+          },
         ],
-        settings: mockSettings
+        settings: mockSettings,
       },
       metadata: {
         tags: ['test'],
         difficulty: 'medium',
         playerCount: { min: 1, max: 4 },
-        estimatedDuration: 15
-      }
+        estimatedDuration: 15,
+      },
     };
   });
 
@@ -335,7 +335,7 @@ describe('PresetManager', () => {
 
     it('should preserve existing players when provided', () => {
       const existingPlayers = [
-        { id: 'player1', name: 'Player 1', isActive: true }
+        { id: 'player1', name: 'Player 1', isActive: true },
       ];
 
       const gameState = presetManager.applyPresetToGameState(mockPreset, existingPlayers);
@@ -442,10 +442,10 @@ describe('PresetManager', () => {
           wheels: [
             {
               ...mockPreset.gameConfig.wheels[0],
-              wedges: [] // Invalid: empty wedges
-            }
-          ]
-        }
+              wedges: [], // Invalid: empty wedges
+            },
+          ],
+        },
       };
 
       const result = presetManager.validatePreset(invalidPreset);
@@ -467,12 +467,12 @@ describe('PresetManager', () => {
                   id: 'wedge1',
                   label: 'Test',
                   weight: -1, // Invalid: negative weight
-                  color: '#ff0000'
-                }
-              ]
-            }
-          ]
-        }
+                  color: '#ff0000',
+                },
+              ],
+            },
+          ],
+        },
       };
 
       const result = presetManager.validatePreset(invalidPreset);
@@ -489,9 +489,9 @@ describe('PresetManager', () => {
           settings: {
             ...mockPreset.gameConfig.settings,
             maxPlayers: 0, // Invalid: zero players
-            enableSound: 'yes' // Invalid: should be boolean
-          }
-        }
+            enableSound: 'yes', // Invalid: should be boolean
+          },
+        },
       };
 
       const result = presetManager.validatePreset(invalidPreset);

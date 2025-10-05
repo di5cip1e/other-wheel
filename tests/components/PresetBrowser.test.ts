@@ -23,21 +23,21 @@ const localStorageMock = (() => {
     },
     clear: () => {
       store = {};
-    }
+    },
   };
 })();
 
 Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 });
 
 // Mock URL.createObjectURL and revokeObjectURL
 Object.defineProperty(window.URL, 'createObjectURL', {
-  value: jest.fn(() => 'mock-url')
+  value: jest.fn(() => 'mock-url'),
 });
 
 Object.defineProperty(window.URL, 'revokeObjectURL', {
-  value: jest.fn()
+  value: jest.fn(),
 });
 
 // Mock FileReader
@@ -56,7 +56,7 @@ class MockFileReader {
 }
 
 Object.defineProperty(window, 'FileReader', {
-  value: MockFileReader
+  value: MockFileReader,
 });
 
 describe('PresetBrowser', () => {
@@ -90,31 +90,31 @@ describe('PresetBrowser', () => {
                   id: 'wedge1',
                   label: 'Test Wedge',
                   weight: 1,
-                  color: '#ff0000'
-                }
+                  color: '#ff0000',
+                },
               ],
               physicsProperties: {
-                frictionCoefficient: 0.1
+                frictionCoefficient: 0.1,
               },
               renderProperties: {
                 radius: 200,
-                position: { x: 300, y: 300 }
-              }
-            }
+                position: { x: 300, y: 300 },
+              },
+            },
           ],
           settings: {
             maxPlayers: 4,
             enableSound: true,
             theme: 'default',
-            deterministic: false
-          }
+            deterministic: false,
+          },
         },
         metadata: {
           tags: ['test', 'fun'],
           difficulty: 'medium',
           playerCount: { min: 1, max: 4 },
-          estimatedDuration: 15
-        }
+          estimatedDuration: 15,
+        },
       },
       {
         id: 'preset2',
@@ -133,32 +133,32 @@ describe('PresetBrowser', () => {
                   id: 'wedge2',
                   label: 'Another Wedge',
                   weight: 2,
-                  color: '#00ff00'
-                }
+                  color: '#00ff00',
+                },
               ],
               physicsProperties: {
-                frictionCoefficient: 0.15
+                frictionCoefficient: 0.15,
               },
               renderProperties: {
                 radius: 150,
-                position: { x: 250, y: 250 }
-              }
-            }
+                position: { x: 250, y: 250 },
+              },
+            },
           ],
           settings: {
             maxPlayers: 6,
             enableSound: false,
             theme: 'dark',
-            deterministic: true
-          }
+            deterministic: true,
+          },
         },
         metadata: {
           tags: ['advanced'],
           difficulty: 'hard',
           playerCount: { min: 2, max: 6 },
-          estimatedDuration: 30
-        }
-      }
+          estimatedDuration: 30,
+        },
+      },
     ];
 
     // Setup mock options
@@ -167,7 +167,7 @@ describe('PresetBrowser', () => {
       onPresetLoad: jest.fn(),
       onPresetSave: jest.fn(),
       onPresetDelete: jest.fn(),
-      onError: jest.fn()
+      onError: jest.fn(),
     };
 
     // Setup mock PresetManager
@@ -184,7 +184,7 @@ describe('PresetBrowser', () => {
     mockPresetManager.validatePreset = jest.fn().mockReturnValue({
       isValid: true,
       errors: [],
-      warnings: []
+      warnings: [],
     });
 
     // Replace the PresetManager constructor to return our mock
@@ -393,7 +393,7 @@ describe('PresetBrowser', () => {
       const mockLink = {
         href: '',
         download: '',
-        click: jest.fn()
+        click: jest.fn(),
       };
       document.createElement = jest.fn().mockReturnValue(mockLink);
       document.body.appendChild = jest.fn();
@@ -472,7 +472,7 @@ describe('PresetBrowser', () => {
         name: 'New Preset',
         description: 'Test description',
         tags: ['tag1', 'tag2'],
-        difficulty: 'hard'
+        difficulty: 'hard',
       });
     });
   });
@@ -524,7 +524,7 @@ describe('PresetBrowser', () => {
       // Simulate file selection
       Object.defineProperty(fileInput, 'files', {
         value: [mockFile],
-        writable: false
+        writable: false,
       });
 
       fileInput.dispatchEvent(new Event('change'));
@@ -590,7 +590,7 @@ describe('PresetBrowser', () => {
       mockPresetManager.validatePreset.mockReturnValueOnce({
         isValid: false,
         errors: ['Invalid preset data'],
-        warnings: []
+        warnings: [],
       });
 
       const importButton = container.querySelector('#import-preset') as HTMLButtonElement;

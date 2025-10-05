@@ -234,7 +234,7 @@ export class StatisticalUtils {
     weights: number[], 
     samples: number = 10000, 
     tolerance: number = 0.05,
-    seed?: number
+    seed?: number,
   ): { passed: boolean; results: number[]; expected: number[]; deviations: number[] } {
     const originalSeed = DeterministicRNG.getSeed();
     

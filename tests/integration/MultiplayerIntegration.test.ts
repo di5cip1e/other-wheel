@@ -39,7 +39,7 @@ describe('Multiplayer Integration', () => {
     mockCallbacks = {
       onGameEnd: onGameEndSpy,
       onTurnComplete: onTurnCompleteSpy,
-      onPlayerChange: onPlayerChangeSpy
+      onPlayerChange: onPlayerChangeSpy,
     };
 
     // Setup game controller
@@ -50,7 +50,7 @@ describe('Multiplayer Integration', () => {
       smallWheelEditorContainerId: 'small-wheel-editor',
       outputElementId: 'output',
       playerUIContainerId: 'player-ui',
-      enableMultiplayer: true
+      enableMultiplayer: true,
     };
 
     gameController = new GameController(options, mockCallbacks);
@@ -288,7 +288,7 @@ describe('Multiplayer Integration', () => {
         smallWheelEditorContainerId: 'small-wheel-editor',
         outputElementId: 'output',
         playerUIContainerId: 'player-ui',
-        enableMultiplayer: true
+        enableMultiplayer: true,
       });
       
       newController.loadGameState(savedState);

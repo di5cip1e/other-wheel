@@ -15,6 +15,10 @@ import { ThemeEngine } from '../engines/ThemeEngine';
 import { Wedge, Wheel, Player, GameState, GameSettings, SpinResult, Rule, RuleEvaluationContext, RuleEvaluationResult } from '../models';
 import { DeterministicRNG } from '../utils/RandomUtils';
 import { defaultAudioTheme } from '../themes/DefaultAudioTheme';
+import { errorHandler, GameErrorFactory } from '../utils/ErrorHandler';
+import { gameStateRecovery } from '../utils/ErrorRecovery';
+import { errorNotification } from './ErrorNotification';
+import { withErrorBoundary } from '../utils/ErrorBoundary';
 
 export interface GameControllerOptions {
   wheelContainerId: string;
@@ -35,6 +39,7 @@ export interface GameControllerCallbacks {
   onRuleTriggered?: (results: RuleEvaluationResult[], context: RuleEvaluationContext) => void;
 }
 
+@withErrorBoundary('GameController')
 export class GameController {
   private wheelRenderer: WheelRenderer;
   private powerMeter: PowerMeter;
@@ -70,128 +75,204 @@ export class GameController {
   private smallWheelWeights: number[] = Array(this.smallWheelWedges).fill(1);
 
   constructor(options: GameControllerOptions, callbacks: GameControllerCallbacks = {}) {
-    this.callbacks = callbacks;
-    
-    // Initialize output element
-    const outputElement = document.getElementById(options.outputElementId);
-    if (!outputElement) {
-      throw new Error(`Output element with id '${options.outputElementId}' not found`);
-    }
-    this.outputElement = outputElement;
-
-    // Initialize player manager
-    this.playerManager = new PlayerManager();
-
-    // Initialize rule engine
-    this.ruleEngine = new RuleEngine();
-
-    // Initialize audio engine if enabled
-    if (options.enableAudio !== false) {
-      this.audioEngine = new AudioEngine();
-      this.audioEngine.loadTheme(defaultAudioTheme);
-    }
-
-    // Initialize theme engine if enabled
-    if (options.enableThemes !== false) {
-      this.themeEngine = new ThemeEngine();
-    }
-
-    // Initialize game settings
-    this.gameSettings = {
-      maxPlayers: 8,
-      enableSound: options.enableAudio !== false,
-      theme: 'default',
-      deterministic: false
-    };
-
-    // Initialize player UI if multiplayer is enabled
-    if (options.enableMultiplayer && options.playerUIContainerId) {
-      const playerUIContainer = document.getElementById(options.playerUIContainerId);
-      if (playerUIContainer) {
-        this.playerUI = new PlayerUI(playerUIContainer, this.playerManager);
+    try {
+      this.callbacks = callbacks;
+      
+      // Initialize error handling
+      this.setupErrorHandling();
+      this.setupRecoveryEventListeners();
+      
+      // Initialize output element
+      const outputElement = document.getElementById(options.outputElementId);
+      if (!outputElement) {
+        const error = GameErrorFactory.createValidationError(
+          `Output element with id '${options.outputElementId}' not found`,
+          'MISSING_OUTPUT_ELEMENT',
+          { elementId: options.outputElementId },
+        );
+        throw error;
       }
+      this.outputElement = outputElement;
+
+      // Initialize player manager
+      this.playerManager = new PlayerManager();
+
+      // Initialize rule engine
+      this.ruleEngine = new RuleEngine();
+
+      // Initialize audio engine if enabled
+      if (options.enableAudio !== false) {
+        this.audioEngine = new AudioEngine();
+        this.audioEngine.loadTheme(defaultAudioTheme);
+      }
+
+      // Initialize theme engine if enabled
+      if (options.enableThemes !== false) {
+        this.themeEngine = new ThemeEngine();
+      }
+
+      // Initialize game settings
+      this.gameSettings = {
+        maxPlayers: 8,
+        enableSound: options.enableAudio !== false,
+        theme: 'default',
+        deterministic: false,
+      };
+
+      // Initialize player UI if multiplayer is enabled
+      if (options.enableMultiplayer && options.playerUIContainerId) {
+        const playerUIContainer = document.getElementById(options.playerUIContainerId);
+        if (playerUIContainer) {
+          this.playerUI = new PlayerUI(playerUIContainer, this.playerManager);
+        }
+      }
+
+      // Initialize wedge selector for probability-based selection
+      this.wedgeSelector = createGlobalWedgeSelector();
+
+      // Initialize wheel renderer
+      this.wheelRenderer = new WheelRenderer(options.wheelContainerId);
+
+      // Initialize power meter with callbacks
+      const powerMeterCallbacks: PowerMeterCallbacks = {
+        onStop: (power: number) => this.handlePowerMeterStop(power),
+        onTick: () => this.playSound('powerMeterTick'),
+      };
+      this.powerMeter = new PowerMeter(
+        { containerId: options.powerMeterContainerId },
+        powerMeterCallbacks,
+      );
+
+      // Create wheel models
+      const bigWheel: Wheel = {
+        id: 'big-wheel',
+        label: 'Big Wheel',
+        wedges: this.bigWheelTexts.map((text, index) => ({
+          id: `big-wedge-${index}`,
+          label: text,
+          weight: this.bigWheelWeights[index] || 1,
+          color: this.generateWedgeColor(index),
+        })),
+        frictionCoefficient: 0.02,
+        radius: 200,
+        position: { x: 0, y: 0 },
+        currentAngle: 0,
+        angularVelocity: 0,
+      };
+
+      const smallWheel: Wheel = {
+        id: 'small-wheel',
+        label: 'Small Wheel',
+        wedges: this.smallWheelTexts.map((text, index) => ({
+          id: `small-wedge-${index}`,
+          label: text,
+          weight: this.smallWheelWeights[index] || 1,
+          color: this.generateWedgeColor(index + this.bigWheelWedges),
+        })),
+        frictionCoefficient: 0.02,
+        clutchRatio: 0.8,
+        radius: 100,
+        position: { x: 0, y: 0 },
+        currentAngle: 0,
+        angularVelocity: 0,
+      };
+
+      // Initialize wheel editors with callbacks
+      const bigWheelCallbacks: WheelEditorCallbacks = {
+        onWheelUpdate: (wheel: Wheel) => {
+          this.bigWheelTexts = wheel.wedges.map(w => w.label);
+          this.bigWheelWeights = wheel.wedges.map(w => w.weight);
+          this.updateBigWheel();
+        },
+      };
+    
+      const smallWheelCallbacks: WheelEditorCallbacks = {
+        onWheelUpdate: (wheel: Wheel) => {
+          this.smallWheelTexts = wheel.wedges.map(w => w.label);
+          this.smallWheelWeights = wheel.wedges.map(w => w.weight);
+          this.updateSmallWheel();
+        },
+      };
+
+      this.bigWheelEditor = new WheelEditor({
+        containerId: options.bigWheelEditorContainerId,
+        wheel: bigWheel,
+        showAdvancedOptions: false,
+      }, bigWheelCallbacks);
+
+      this.smallWheelEditor = new WheelEditor({
+        containerId: options.smallWheelEditorContainerId,
+        wheel: smallWheel,
+        showAdvancedOptions: false,
+      }, smallWheelCallbacks);
+
+      this.initializeWheels();
+    } catch (error) {
+      this.handleInitializationError(error);
+      throw error;
     }
+  }
 
-    // Initialize wedge selector for probability-based selection
-    this.wedgeSelector = createGlobalWedgeSelector();
+  /**
+   * Setup error handling for the game controller
+   */
+  private setupErrorHandling(): void {
+    // Setup error callback to show notifications
+    errorHandler.setErrorCallback((error) => {
+      const recoveryOptions = errorHandler.getRecoveryOptions(error);
+      errorNotification.showError(error, recoveryOptions);
+    });
 
-    // Initialize wheel renderer
-    this.wheelRenderer = new WheelRenderer(options.wheelContainerId);
+    // Setup recovery callback
+    errorHandler.setRecoveryCallback((error, success) => {
+      if (success) {
+        errorNotification.showSuccess(`Recovery successful: ${error.userMessage}`);
+      }
+    });
 
-    // Initialize power meter with callbacks
-    const powerMeterCallbacks: PowerMeterCallbacks = {
-      onStop: (power: number) => this.handlePowerMeterStop(power),
-      onTick: () => this.playSound('powerMeterTick')
-    };
-    this.powerMeter = new PowerMeter(
-      { containerId: options.powerMeterContainerId },
-      powerMeterCallbacks
+    // Create backup of initial state
+    this.createGameStateBackup();
+  }
+
+  /**
+   * Handle initialization errors
+   */
+  private handleInitializationError(error: any): void {
+    const gameError = GameErrorFactory.createGameStateError(
+      `Failed to initialize GameController: ${error.message}`,
+      'INITIALIZATION_FAILED',
+      { originalError: error },
     );
-
-    // Create wheel models
-    const bigWheel: Wheel = {
-      id: 'big-wheel',
-      label: 'Big Wheel',
-      wedges: this.bigWheelTexts.map((text, index) => ({
-        id: `big-wedge-${index}`,
-        label: text,
-        weight: this.bigWheelWeights[index] || 1,
-        color: this.generateWedgeColor(index)
-      })),
-      frictionCoefficient: 0.02,
-      radius: 200,
-      position: { x: 0, y: 0 },
-      currentAngle: 0,
-      angularVelocity: 0
-    };
-
-    const smallWheel: Wheel = {
-      id: 'small-wheel',
-      label: 'Small Wheel',
-      wedges: this.smallWheelTexts.map((text, index) => ({
-        id: `small-wedge-${index}`,
-        label: text,
-        weight: this.smallWheelWeights[index] || 1,
-        color: this.generateWedgeColor(index + this.bigWheelWedges)
-      })),
-      frictionCoefficient: 0.02,
-      clutchRatio: 0.8,
-      radius: 100,
-      position: { x: 0, y: 0 },
-      currentAngle: 0,
-      angularVelocity: 0
-    };
-
-    // Initialize wheel editors with callbacks
-    const bigWheelCallbacks: WheelEditorCallbacks = {
-      onWheelUpdate: (wheel: Wheel) => {
-        this.bigWheelTexts = wheel.wedges.map(w => w.label);
-        this.bigWheelWeights = wheel.wedges.map(w => w.weight);
-        this.updateBigWheel();
-      }
-    };
     
-    const smallWheelCallbacks: WheelEditorCallbacks = {
-      onWheelUpdate: (wheel: Wheel) => {
-        this.smallWheelTexts = wheel.wedges.map(w => w.label);
-        this.smallWheelWeights = wheel.wedges.map(w => w.weight);
-        this.updateSmallWheel();
-      }
+    errorHandler.handleError(gameError);
+  }
+
+  /**
+   * Create a backup of the current game state
+   */
+  private createGameStateBackup(): void {
+    try {
+      const gameState = this.getFullGameState();
+      gameStateRecovery.createBackup(gameState);
+    } catch (error) {
+      console.warn('Failed to create game state backup:', error);
+    }
+  }
+
+  /**
+   * Get full game state for backup purposes
+   */
+  private getFullGameState(): any {
+    return {
+      wheels: this.getWheels(),
+      players: this.playerManager.getPlayers(),
+      currentPlayerIndex: this.playerManager.getPlayers().findIndex(p => p.isActive),
+      gamePhase: this.isSpinning ? 'spinning' : 'playing',
+      scores: new Map(this.playerManager.getPlayerScores().map(s => [s.playerId, s.score])),
+      rules: this.ruleEngine.getAllRules(),
+      settings: this.gameSettings,
+      gameState: this.getGameState(),
     };
-
-    this.bigWheelEditor = new WheelEditor({
-      containerId: options.bigWheelEditorContainerId,
-      wheel: bigWheel,
-      showAdvancedOptions: false
-    }, bigWheelCallbacks);
-
-    this.smallWheelEditor = new WheelEditor({
-      containerId: options.smallWheelEditorContainerId,
-      wheel: smallWheel,
-      showAdvancedOptions: false
-    }, smallWheelCallbacks);
-
-    this.initializeWheels();
   }
 
   /**
@@ -208,7 +289,7 @@ export class GameController {
       wedgeCount: this.bigWheelWedges,
       texts: this.bigWheelTexts,
       colors: this.wedgeColors,
-      radius: 200
+      radius: 200,
     };
     this.wheelRenderer.createWheel(options);
   }
@@ -219,7 +300,7 @@ export class GameController {
       wedgeCount: this.smallWheelWedges,
       texts: this.smallWheelTexts,
       colors: this.wedgeColors,
-      radius: 100
+      radius: 100,
     };
     this.wheelRenderer.createWheel(options);
   }
@@ -228,58 +309,138 @@ export class GameController {
    * Handles power meter stop event - preserves original stopMeter logic
    */
   private handlePowerMeterStop(power: number): void {
-    // Resume audio context if needed (required after user interaction)
-    if (this.audioEngine) {
-      this.audioEngine.resumeAudioContext();
+    try {
+      // Create backup before starting spin
+      this.createGameStateBackup();
+
+      // Resume audio context if needed (required after user interaction)
+      if (this.audioEngine) {
+        this.audioEngine.resumeAudioContext();
+      }
+
+      // Play wheel spin sound
+      this.playSound('wheelSpin');
+
+      // Validate power value
+      if (typeof power !== 'number' || power < 0 || power > 100) {
+        throw GameErrorFactory.createValidationError(
+          `Invalid power value: ${power}`,
+          'INVALID_POWER_VALUE',
+          { power },
+        );
+      }
+
+      // Calculate spin power based on meter position (preserving original calculation)
+      const powerRatio = power / 100;
+      this.bigWheelSpeed = powerRatio * 20; // Max speed of 20 degrees per frame
+      this.smallWheelSpeed = Math.min(powerRatio * 15, 10); // Clutch caps at 10 degrees per frame
+      
+      this.isSpinning = true;
+      this.spinInterval = window.setInterval(() => this.updateSpin(), 50);
+    } catch (error) {
+      const gameError = GameErrorFactory.createPhysicsError(
+        `Failed to start wheel spin: ${error instanceof Error ? error.message : String(error)}`,
+        'SPIN_START_FAILED',
+        { power, error },
+      );
+      errorHandler.handleError(gameError);
     }
-
-    // Play wheel spin sound
-    this.playSound('wheelSpin');
-
-    // Calculate spin power based on meter position (preserving original calculation)
-    const powerRatio = power / 100;
-    this.bigWheelSpeed = powerRatio * 20; // Max speed of 20 degrees per frame
-    this.smallWheelSpeed = Math.min(powerRatio * 15, 10); // Clutch caps at 10 degrees per frame
-    
-    this.isSpinning = true;
-    this.spinInterval = window.setInterval(() => this.updateSpin(), 50);
   }
 
   /**
    * Updates wheel spinning - preserves original updateSpin function
    */
   private updateSpin(): void {
-    if (!this.isSpinning) return;
-    
-    // Update wheel angles
-    this.bigWheelAngle += this.bigWheelSpeed;
-    this.smallWheelAngle += this.smallWheelSpeed;
-    
-    // Apply friction - preserving original friction values
-    this.bigWheelSpeed *= 0.98;
-    this.smallWheelSpeed *= 0.97;
-    
-    // Update wheel rotations
-    this.wheelRenderer.updateWheelRotation('bigWheel', this.bigWheelAngle);
-    this.wheelRenderer.updateWheelRotation('smallWheel', this.smallWheelAngle);
-    
-    // Stop spinning when speeds are very low - preserving original threshold
-    if (Math.abs(this.bigWheelSpeed) < 0.1 && Math.abs(this.smallWheelSpeed) < 0.1) {
+    try {
+      if (!this.isSpinning) {return;}
+      
+      // Check for invalid physics state
+      if (!isFinite(this.bigWheelSpeed) || !isFinite(this.smallWheelSpeed) ||
+          !isFinite(this.bigWheelAngle) || !isFinite(this.smallWheelAngle)) {
+        throw GameErrorFactory.createPhysicsError(
+          'Physics simulation became unstable (infinite or NaN values)',
+          'PHYSICS_UNSTABLE',
+          {
+            bigWheelSpeed: this.bigWheelSpeed,
+            smallWheelSpeed: this.smallWheelSpeed,
+            bigWheelAngle: this.bigWheelAngle,
+            smallWheelAngle: this.smallWheelAngle,
+          },
+        );
+      }
+      
+      // Update wheel angles
+      this.bigWheelAngle += this.bigWheelSpeed;
+      this.smallWheelAngle += this.smallWheelSpeed;
+      
+      // Apply friction - preserving original friction values
+      this.bigWheelSpeed *= 0.98;
+      this.smallWheelSpeed *= 0.97;
+      
+      // Update wheel rotations
+      this.wheelRenderer.updateWheelRotation('bigWheel', this.bigWheelAngle);
+      this.wheelRenderer.updateWheelRotation('smallWheel', this.smallWheelAngle);
+      
+      // Stop spinning when speeds are very low - preserving original threshold
+      if (Math.abs(this.bigWheelSpeed) < 0.1 && Math.abs(this.smallWheelSpeed) < 0.1) {
+        if (this.spinInterval !== null) {
+          clearInterval(this.spinInterval);
+          this.spinInterval = null;
+        }
+        this.isSpinning = false;
+        
+        // Play wheel stop sound
+        this.playSound('wheelStop');
+        
+        this.powerMeter.resetMeter();
+        
+        // Delay result determination to let stop sound play
+        setTimeout(() => {
+          this.determineResult();
+        }, 200);
+      }
+    } catch (error) {
+      // Stop spinning on error
       if (this.spinInterval !== null) {
         clearInterval(this.spinInterval);
         this.spinInterval = null;
       }
       this.isSpinning = false;
       
-      // Play wheel stop sound
-      this.playSound('wheelStop');
+      if (error instanceof Error && 'type' in error) {
+        errorHandler.handleError(error as any);
+      } else {
+        const gameError = GameErrorFactory.createPhysicsError(
+          'Physics simulation error occurred',
+          'PHYSICS_ERROR',
+        );
+        errorHandler.handleError(gameError);
+      }
+      
+      // Attempt to recover by resetting physics state
+      this.resetPhysicsState();
+    }
+  }
+
+  /**
+   * Reset physics state to a safe condition
+   */
+  private resetPhysicsState(): void {
+    try {
+      this.bigWheelSpeed = 0;
+      this.smallWheelSpeed = 0;
+      this.isSpinning = false;
+      
+      if (this.spinInterval !== null) {
+        clearInterval(this.spinInterval);
+        this.spinInterval = null;
+      }
       
       this.powerMeter.resetMeter();
       
-      // Delay result determination to let stop sound play
-      setTimeout(() => {
-        this.determineResult();
-      }, 200);
+      errorNotification.showWarning('Physics simulation was reset due to an error. You can try spinning again.');
+    } catch (error) {
+      console.error('Failed to reset physics state:', error);
     }
   }
 
@@ -291,7 +452,7 @@ export class GameController {
       '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', 
       '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43',
       '#ee5a24', '#0abde3', '#10ac84', '#f9ca24', '#f0932b',
-      '#eb4d4b', '#6c5ce7', '#a29bfe', '#fd79a8', '#e17055'
+      '#eb4d4b', '#6c5ce7', '#a29bfe', '#fd79a8', '#e17055',
     ];
     return colors[index % colors.length] || '#cccccc';
   }
@@ -300,40 +461,84 @@ export class GameController {
    * Determines the spin result using weighted probability selection
    */
   private determineResult(): void {
-    // Create wedge objects for probability selection
-    const bigWheelWedges: Wedge[] = this.bigWheelTexts.map((text, index) => ({
-      id: `big-${index}`,
-      label: text,
-      weight: this.bigWheelWeights[index] || 1,
-      color: this.wedgeColors[index % this.wedgeColors.length]!
-    }));
+    try {
+      // Validate wheel data
+      if (this.bigWheelTexts.length === 0 || this.smallWheelTexts.length === 0) {
+        throw GameErrorFactory.createValidationError(
+          'Cannot determine result: wheel has no wedges',
+          'EMPTY_WHEEL',
+          { 
+            bigWheelCount: this.bigWheelTexts.length,
+            smallWheelCount: this.smallWheelTexts.length,
+          },
+        );
+      }
 
-    const smallWheelWedges: Wedge[] = this.smallWheelTexts.map((text, index) => ({
-      id: `small-${index}`,
-      label: text,
-      weight: this.smallWheelWeights[index] || 1,
-      color: this.wedgeColors[index % this.wedgeColors.length]!
-    }));
+      // Create wedge objects for probability selection
+      const bigWheelWedges: Wedge[] = this.bigWheelTexts.map((text, index) => ({
+        id: `big-${index}`,
+        label: text,
+        weight: this.bigWheelWeights[index] || 1,
+        color: this.wedgeColors[index % this.wedgeColors.length]!,
+      }));
 
-    // Use weighted selection instead of visual position
-    const bigResult = this.wedgeSelector.selectWedge(bigWheelWedges);
-    const smallResult = this.wedgeSelector.selectWedge(smallWheelWedges);
-    
-    // Create spin result
-    const spinResult: SpinResult = {
-      bigWheelWedge: bigResult.wedge,
-      smallWheelWedge: smallResult.wedge,
-      bigWheelIndex: this.bigWheelTexts.indexOf(bigResult.wedge.label),
-      smallWheelIndex: this.smallWheelTexts.indexOf(smallResult.wedge.label)
-    };
+      const smallWheelWedges: Wedge[] = this.smallWheelTexts.map((text, index) => ({
+        id: `small-${index}`,
+        label: text,
+        weight: this.smallWheelWeights[index] || 1,
+        color: this.wedgeColors[index % this.wedgeColors.length]!,
+      }));
 
-    // Handle multiplayer turn completion
-    const currentPlayer = this.playerManager.getCurrentPlayer();
-    if (currentPlayer) {
-      this.handleMultiplayerResult(spinResult, currentPlayer);
-    } else {
-      this.displaySinglePlayerResult(spinResult);
+      // Use weighted selection instead of visual position
+      const bigResult = this.wedgeSelector.selectWedge(bigWheelWedges);
+      const smallResult = this.wedgeSelector.selectWedge(smallWheelWedges);
+      
+      if (!bigResult || !smallResult) {
+        throw GameErrorFactory.createValidationError(
+          'Wedge selection failed',
+          'SELECTION_FAILED',
+          { bigResult, smallResult },
+        );
+      }
+      
+      // Create spin result
+      const spinResult: SpinResult = {
+        bigWheelWedge: bigResult.wedge,
+        smallWheelWedge: smallResult.wedge,
+        bigWheelIndex: this.bigWheelTexts.indexOf(bigResult.wedge.label),
+        smallWheelIndex: this.smallWheelTexts.indexOf(smallResult.wedge.label),
+      };
+
+      // Handle multiplayer turn completion
+      const currentPlayer = this.playerManager.getCurrentPlayer();
+      if (currentPlayer) {
+        this.handleMultiplayerResult(spinResult, currentPlayer);
+      } else {
+        this.displaySinglePlayerResult(spinResult);
+      }
+    } catch (error) {
+      const gameError = GameErrorFactory.createGameStateError(
+        `Failed to determine spin result: ${error instanceof Error ? error.message : String(error)}`,
+        'RESULT_DETERMINATION_FAILED',
+        { error },
+      );
+      errorHandler.handleError(gameError);
+      
+      // Show fallback result
+      this.showFallbackResult();
     }
+  }
+
+  /**
+   * Show a fallback result when normal result determination fails
+   */
+  private showFallbackResult(): void {
+    this.outputElement.innerHTML = `
+      <div class="error-result">
+        <div><strong>Error:</strong> Unable to determine spin result</div>
+        <div>Please try spinning again</div>
+      </div>
+    `;
   }
 
   /**
@@ -347,11 +552,11 @@ export class GameController {
         outerWedgeId: spinResult.bigWheelWedge.id,
         innerWedgeId: spinResult.smallWheelWedge.id,
         outerWedgeLabel: spinResult.bigWheelWedge.label,
-        innerWedgeLabel: spinResult.smallWheelWedge.label
+        innerWedgeLabel: spinResult.smallWheelWedge.label,
       },
       playerScore: this.playerManager.getPlayerScoreValue(currentPlayer.id),
       gameHistory: this.playerManager.getGameHistory(),
-      roundNumber: this.playerManager.getCurrentRound()
+      roundNumber: this.playerManager.getCurrentRound(),
     };
 
     // Evaluate rules
@@ -471,7 +676,7 @@ export class GameController {
       bigWheelTexts: [...this.bigWheelTexts],
       smallWheelTexts: [...this.smallWheelTexts],
       bigWheelWeights: [...this.bigWheelWeights],
-      smallWheelWeights: [...this.smallWheelWeights]
+      smallWheelWeights: [...this.smallWheelWeights],
     };
   }
 
@@ -613,13 +818,13 @@ export class GameController {
           id: `big-wedge-${index}`,
           label: text,
           weight: this.bigWheelWeights[index] || 1,
-          color: this.generateWedgeColor(index)
+          color: this.generateWedgeColor(index),
         })),
         frictionCoefficient: 0.02,
         radius: 200,
         position: { x: 0, y: 0 },
         currentAngle: this.bigWheelAngle,
-        angularVelocity: this.bigWheelSpeed
+        angularVelocity: this.bigWheelSpeed,
       },
       {
         id: 'small-wheel',
@@ -628,15 +833,15 @@ export class GameController {
           id: `small-wedge-${index}`,
           label: text,
           weight: this.smallWheelWeights[index] || 1,
-          color: this.generateWedgeColor(index + this.bigWheelWedges)
+          color: this.generateWedgeColor(index + this.bigWheelWedges),
         })),
         frictionCoefficient: 0.02,
         clutchRatio: 0.8,
         radius: 100,
         position: { x: 0, y: 0 },
         currentAngle: this.smallWheelAngle,
-        angularVelocity: this.smallWheelSpeed
-      }
+        angularVelocity: this.smallWheelSpeed,
+      },
     ];
   }
 
@@ -717,13 +922,13 @@ export class GameController {
             id: `big-wedge-${index}`,
             label: text,
             weight: this.bigWheelWeights[index] || 1,
-            color: this.generateWedgeColor(index)
+            color: this.generateWedgeColor(index),
           })),
           frictionCoefficient: 0.02,
           radius: 200,
           position: { x: 0, y: 0 },
           currentAngle: this.bigWheelAngle,
-          angularVelocity: this.bigWheelSpeed
+          angularVelocity: this.bigWheelSpeed,
         },
         {
           id: 'small-wheel',
@@ -732,26 +937,26 @@ export class GameController {
             id: `small-wedge-${index}`,
             label: text,
             weight: this.smallWheelWeights[index] || 1,
-            color: this.generateWedgeColor(index + this.bigWheelWedges)
+            color: this.generateWedgeColor(index + this.bigWheelWedges),
           })),
           frictionCoefficient: 0.02,
           clutchRatio: 0.8,
           radius: 100,
           position: { x: 0, y: 0 },
           currentAngle: this.smallWheelAngle,
-          angularVelocity: this.smallWheelSpeed
-        }
+          angularVelocity: this.smallWheelSpeed,
+        },
       ],
       players: this.playerManager.getPlayers(),
       currentPlayerIndex: this.playerManager.getPlayers().findIndex(p => p.isActive),
       gamePhase: this.isSpinning ? 'spinning' : 'playing',
       scores: new Map(this.playerManager.getPlayerScores().map(s => [s.playerId, s.score])),
-      settings: this.gameSettings
+      settings: this.gameSettings,
     };
 
     return JSON.stringify({
       gameState,
-      playerManagerState: this.playerManager.exportState()
+      playerManagerState: this.playerManager.exportState(),
     });
   }
 
@@ -760,8 +965,33 @@ export class GameController {
    */
   public loadGameState(savedState: string): void {
     try {
+      // Validate input
+      if (!savedState || typeof savedState !== 'string') {
+        throw GameErrorFactory.createValidationError(
+          'Invalid saved state: must be a non-empty string',
+          'INVALID_SAVED_STATE',
+          { savedState: typeof savedState },
+        );
+      }
+
       const parsed = JSON.parse(savedState);
       const { gameState, playerManagerState } = parsed;
+
+      // Validate game state structure
+      if (!gameStateRecovery.validateGameState(gameState)) {
+        // Attempt to repair the game state
+        const repairedState = gameStateRecovery.repairGameState(gameState);
+        if (!gameStateRecovery.validateGameState(repairedState)) {
+          throw GameErrorFactory.createGameStateError(
+            'Game state is corrupted and cannot be repaired',
+            'CORRUPTED_GAME_STATE',
+            { originalState: gameState, repairedState },
+          );
+        }
+        // Use repaired state
+        Object.assign(gameState, repairedState);
+        errorNotification.showWarning('Game state was corrupted and has been repaired. Some data may have been reset.');
+      }
 
       // Restore wheel data
       if (gameState.wheels && gameState.wheels.length >= 2) {
@@ -796,9 +1026,77 @@ export class GameController {
         this.playerUI.update();
       }
 
+      // Create backup of loaded state
+      this.createGameStateBackup();
+
+      errorNotification.showSuccess('Game state loaded successfully');
+
     } catch (error) {
-      console.error('Failed to load game state:', error);
-      throw new Error('Invalid saved game state');
+      const gameError = GameErrorFactory.createStorageError(
+        `Failed to load game state: ${error instanceof Error ? error.message : String(error)}`,
+        'LOAD_STATE_FAILED',
+        { error, savedState: savedState?.substring(0, 100) + '...' },
+      );
+      
+      errorHandler.handleError(gameError);
+      
+      // Attempt to restore from backup
+      const backup = gameStateRecovery.restoreFromBackup();
+      if (backup) {
+        try {
+          this.loadGameState(JSON.stringify({ gameState: backup, playerManagerState: null }));
+          errorNotification.showWarning('Failed to load saved state. Restored from backup instead.');
+        } catch (backupError) {
+          // If backup also fails, reset to default state
+          this.resetToDefaultState();
+          errorNotification.showWarning('Failed to load saved state and backup. Game has been reset to default.');
+        }
+      } else {
+        this.resetToDefaultState();
+        errorNotification.showWarning('Failed to load saved state. Game has been reset to default.');
+      }
+    }
+  }
+
+  /**
+   * Reset game to a safe default state
+   */
+  private resetToDefaultState(): void {
+    try {
+      // Reset wheel data to defaults
+      this.bigWheelTexts = Array(this.bigWheelWedges).fill(null).map((_, i) => `Big ${i+1}`);
+      this.smallWheelTexts = Array(this.smallWheelWedges).fill(null).map((_, i) => `Small ${i+1}`);
+      this.bigWheelWeights = Array(this.bigWheelWedges).fill(1);
+      this.smallWheelWeights = Array(this.smallWheelWedges).fill(1);
+
+      // Reset physics state
+      this.resetPhysicsState();
+
+      // Reset player manager
+      this.playerManager.reset();
+
+      // Reset game settings
+      this.gameSettings = {
+        maxPlayers: 8,
+        enableSound: true,
+        theme: 'default',
+        deterministic: false,
+      };
+
+      // Update UI
+      this.updateBigWheel();
+      this.updateSmallWheel();
+      if (this.playerUI) {
+        this.playerUI.update();
+      }
+
+      // Clear output
+      this.outputElement.innerHTML = '';
+
+      // Create backup of default state
+      this.createGameStateBackup();
+    } catch (error) {
+      console.error('Failed to reset to default state:', error);
     }
   }
 
@@ -875,21 +1173,112 @@ export class GameController {
    * Destroys the game controller and cleans up resources
    */
   public destroy(): void {
-    if (this.spinInterval !== null) {
-      clearInterval(this.spinInterval);
+    try {
+      if (this.spinInterval !== null) {
+        clearInterval(this.spinInterval);
+      }
+      
+      // Clean up components with error handling
+      try { this.powerMeter.destroy(); } catch (e) { console.warn('Error destroying PowerMeter:', e); }
+      try { this.bigWheelEditor.destroy(); } catch (e) { console.warn('Error destroying BigWheelEditor:', e); }
+      try { this.smallWheelEditor.destroy(); } catch (e) { console.warn('Error destroying SmallWheelEditor:', e); }
+      try { this.wheelRenderer.clearWheels(); } catch (e) { console.warn('Error clearing wheels:', e); }
+      
+      if (this.playerUI) {
+        try { this.playerUI.destroy(); } catch (e) { console.warn('Error destroying PlayerUI:', e); }
+      }
+      
+      if (this.audioEngine) {
+        try { this.audioEngine.dispose(); } catch (e) { console.warn('Error disposing AudioEngine:', e); }
+      }
+      
+      if (this.themeEngine) {
+        try { this.themeEngine.dispose(); } catch (e) { console.warn('Error disposing ThemeEngine:', e); }
+      }
+
+      // Remove error recovery event listeners
+      this.removeRecoveryEventListeners();
+      
+    } catch (error) {
+      console.error('Error during GameController destruction:', error);
     }
-    this.powerMeter.destroy();
-    this.bigWheelEditor.destroy();
-    this.smallWheelEditor.destroy();
-    this.wheelRenderer.clearWheels();
-    if (this.playerUI) {
-      this.playerUI.destroy();
+  }
+
+  /**
+   * Setup recovery event listeners
+   */
+  private setupRecoveryEventListeners(): void {
+    // Listen for game state recovery events
+    window.addEventListener('game-state-recovered', this.handleGameStateRecovery.bind(this) as EventListener);
+    window.addEventListener('physics-recovered', this.handlePhysicsRecovery.bind(this) as EventListener);
+    window.addEventListener('rendering-recovered', this.handleRenderingRecovery.bind(this) as EventListener);
+  }
+
+  /**
+   * Remove recovery event listeners
+   */
+  private removeRecoveryEventListeners(): void {
+    window.removeEventListener('game-state-recovered', this.handleGameStateRecovery.bind(this) as EventListener);
+    window.removeEventListener('physics-recovered', this.handlePhysicsRecovery.bind(this) as EventListener);
+    window.removeEventListener('rendering-recovered', this.handleRenderingRecovery.bind(this) as EventListener);
+  }
+
+  /**
+   * Handle game state recovery event
+   */
+  private handleGameStateRecovery(event: Event): void {
+    try {
+      const customEvent = event as CustomEvent;
+      const { gameState, method } = customEvent.detail;
+      
+      if (gameState && method === 'backup') {
+        // Restore from backup
+        this.loadGameState(JSON.stringify({ gameState, playerManagerState: null }));
+      } else if (gameState && (method === 'repair' || method === 'minimal')) {
+        // Apply repaired or minimal state
+        const currentState = this.getFullGameState();
+        Object.assign(currentState, gameState);
+        this.loadGameState(JSON.stringify({ gameState: currentState, playerManagerState: null }));
+      }
+    } catch (error) {
+      console.error('Failed to handle game state recovery:', error);
     }
-    if (this.audioEngine) {
-      this.audioEngine.dispose();
+  }
+
+  /**
+   * Handle physics recovery event
+   */
+  private handlePhysicsRecovery(event: Event): void {
+    try {
+      const customEvent = event as CustomEvent;
+      const { fallbackMode } = customEvent.detail;
+      
+      if (fallbackMode) {
+        // Reset physics to safe state
+        this.resetPhysicsState();
+        errorNotification.showWarning('Physics engine has been reset to a simplified mode.');
+      }
+    } catch (error) {
+      console.error('Failed to handle physics recovery:', error);
     }
-    if (this.themeEngine) {
-      this.themeEngine.dispose();
+  }
+
+  /**
+   * Handle rendering recovery event
+   */
+  private handleRenderingRecovery(event: Event): void {
+    try {
+      const customEvent = event as CustomEvent;
+      const { fallbackRenderer } = customEvent.detail;
+      
+      if (fallbackRenderer === 'css') {
+        // Reinitialize wheels with CSS fallback
+        this.updateBigWheel();
+        this.updateSmallWheel();
+        errorNotification.showWarning('Rendering has been switched to CSS fallback mode.');
+      }
+    } catch (error) {
+      console.error('Failed to handle rendering recovery:', error);
     }
   }
 }

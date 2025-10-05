@@ -20,9 +20,9 @@ class MockImage {
     setTimeout(() => {
       if (this.src && !this.src.includes('invalid')) {
         this.complete = true;
-        if (this.onload) this.onload();
+        if (this.onload) {this.onload();}
       } else {
-        if (this.onerror) this.onerror();
+        if (this.onerror) {this.onerror();}
       }
     }, 10);
   }
@@ -43,9 +43,9 @@ class MockVideo {
     setTimeout(() => {
       if (this.src && !this.src.includes('invalid')) {
         this.readyState = 2; // HAVE_CURRENT_DATA
-        if (this.onloadeddata) this.onloadeddata();
+        if (this.onloadeddata) {this.onloadeddata();}
       } else {
-        if (this.onerror) this.onerror();
+        if (this.onerror) {this.onerror();}
       }
     }, 15);
   }
@@ -59,10 +59,10 @@ class MockFileReader {
   readAsDataURL(file: File): void {
     setTimeout(() => {
       if (file.name.includes('invalid')) {
-        if (this.onerror) this.onerror();
+        if (this.onerror) {this.onerror();}
       } else {
         this.result = `data:${file.type};base64,mockbase64data`;
-        if (this.onload) this.onload({ target: this });
+        if (this.onload) {this.onload({ target: this });}
       }
     }, 5);
   }
@@ -77,7 +77,7 @@ class MockFileReader {
       return new MockVideo();
     }
     return {};
-  }
+  },
 };
 
 describe('MediaManager', () => {
@@ -96,7 +96,7 @@ describe('MediaManager', () => {
       const media: WedgeMedia = {
         type: 'image',
         src: 'https://example.com/image.jpg',
-        alt: 'Test image'
+        alt: 'Test image',
       };
 
       const result = mediaManager.validateMedia(media);
@@ -107,7 +107,7 @@ describe('MediaManager', () => {
     test('should validate valid video media', () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/video.mp4'
+        src: 'https://example.com/video.mp4',
       };
 
       const result = mediaManager.validateMedia(media);
@@ -118,7 +118,7 @@ describe('MediaManager', () => {
     test('should reject empty media source', () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: ''
+        src: '',
       };
 
       const result = mediaManager.validateMedia(media);
@@ -129,7 +129,7 @@ describe('MediaManager', () => {
     test('should reject invalid URL format', () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'not-a-valid-url'
+        src: 'not-a-valid-url',
       };
 
       const result = mediaManager.validateMedia(media);
@@ -140,7 +140,7 @@ describe('MediaManager', () => {
     test('should validate data URLs', () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='
+        src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
       };
 
       const result = mediaManager.validateMedia(media);
@@ -150,7 +150,7 @@ describe('MediaManager', () => {
     test('should reject invalid data URL format', () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'data:invalid-format'
+        src: 'data:invalid-format',
       };
 
       const result = mediaManager.validateMedia(media);
@@ -161,7 +161,7 @@ describe('MediaManager', () => {
     test('should suggest correct type for mismatched URLs', () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/image.jpg'
+        src: 'https://example.com/image.jpg',
       };
 
       const result = mediaManager.validateMedia(media);
@@ -176,7 +176,7 @@ describe('MediaManager', () => {
       const media: WedgeMedia = {
         type: 'image',
         src: 'https://example.com/image.jpg',
-        alt: 'Test image'
+        alt: 'Test image',
       };
 
       const result = await mediaManager.loadMedia(media);
@@ -190,7 +190,7 @@ describe('MediaManager', () => {
     test('should load valid video successfully', async () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/video.mp4'
+        src: 'https://example.com/video.mp4',
       };
 
       const result = await mediaManager.loadMedia(media);
@@ -204,7 +204,7 @@ describe('MediaManager', () => {
     test('should handle image loading failure', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/invalid-image.jpg'
+        src: 'https://example.com/invalid-image.jpg',
       };
 
       const result = await mediaManager.loadMedia(media);
@@ -218,7 +218,7 @@ describe('MediaManager', () => {
     test('should handle video loading failure', async () => {
       const media: WedgeMedia = {
         type: 'video',
-        src: 'https://example.com/invalid-video.mp4'
+        src: 'https://example.com/invalid-video.mp4',
       };
 
       const result = await mediaManager.loadMedia(media);
@@ -240,7 +240,7 @@ describe('MediaManager', () => {
     test('should handle unsupported media type', async () => {
       const media: WedgeMedia = {
         type: 'text' as any,
-        src: 'https://example.com/file.txt'
+        src: 'https://example.com/file.txt',
       };
 
       const result = await mediaManager.loadMedia(media);
@@ -255,7 +255,7 @@ describe('MediaManager', () => {
     test('should cache loaded media', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/cached-image.jpg'
+        src: 'https://example.com/cached-image.jpg',
       };
 
       // First load
@@ -271,7 +271,7 @@ describe('MediaManager', () => {
     test('should provide cache statistics', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/stats-image.jpg'
+        src: 'https://example.com/stats-image.jpg',
       };
 
       const initialStats = mediaManager.getCacheStats();
@@ -287,7 +287,7 @@ describe('MediaManager', () => {
     test('should clear cache', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/clear-test.jpg'
+        src: 'https://example.com/clear-test.jpg',
       };
 
       await mediaManager.loadMedia(media);
@@ -359,14 +359,14 @@ describe('MediaManager', () => {
     test('should handle concurrent loading of same media', async () => {
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/concurrent-test.jpg'
+        src: 'https://example.com/concurrent-test.jpg',
       };
 
       // Start multiple loads simultaneously
       const promises = [
         mediaManager.loadMedia(media),
         mediaManager.loadMedia(media),
-        mediaManager.loadMedia(media)
+        mediaManager.loadMedia(media),
       ];
 
       const results = await Promise.all(promises);
@@ -385,7 +385,7 @@ describe('MediaManager', () => {
       // For now, we'll test that the timeout mechanism exists
       const media: WedgeMedia = {
         type: 'image',
-        src: 'https://example.com/timeout-test.jpg'
+        src: 'https://example.com/timeout-test.jpg',
       };
 
       const result = await mediaManager.loadMedia(media);

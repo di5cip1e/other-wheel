@@ -1,10 +1,11 @@
 /**
  * WheelRenderer class - Extracts and modularizes existing wheel rendering functionality
  * Preserves the current CSS-based rendering approach while adding TypeScript structure
+ * Now includes Canvas rendering support with CSS fallback
  */
 
-// Types are imported but may not be used directly in implementation
-// They are available for future type annotations
+import { CanvasWheelRenderer, CanvasRenderOptions } from './CanvasWheelRenderer';
+import { Wheel, Wedge } from '../models';
 
 export interface WheelRenderOptions {
   wheelId: string;
@@ -14,10 +15,22 @@ export interface WheelRenderOptions {
   radius: number;
 }
 
+export interface EnhancedWheelRenderOptions {
+  wheelId: string;
+  wheel: Wheel;
+  showLabels?: boolean;
+  showProbabilityIndicators?: boolean;
+  highlightedWedgeId?: string;
+  animationProgress?: number;
+  useCanvas?: boolean;
+}
+
 export class WheelRenderer {
   private container: HTMLElement;
   private wheels: Map<string, HTMLElement> = new Map();
   private needleElement: HTMLElement | null = null;
+  private canvasRenderer: CanvasWheelRenderer | null = null;
+  private canvasSupported: boolean = false;
 
   constructor(containerId: string) {
     const container = document.getElementById(containerId);
@@ -25,7 +38,18 @@ export class WheelRenderer {
       throw new Error(`Container element with id '${containerId}' not found`);
     }
     this.container = container;
+    this.detectCanvasSupport();
     this.initializeContainer();
+  }
+
+  private detectCanvasSupport(): void {
+    try {
+      const testCanvas = document.createElement('canvas');
+      const ctx = testCanvas.getContext('2d');
+      this.canvasSupported = !!(ctx && typeof ctx.fillRect === 'function');
+    } catch (error) {
+      this.canvasSupported = false;
+    }
   }
 
   private initializeContainer(): void {
@@ -36,7 +60,22 @@ export class WheelRenderer {
     this.container.style.height = '500px';
     this.container.style.margin = '0 auto';
 
-    // Create needle element
+    // Initialize Canvas renderer if supported
+    if (this.canvasSupported) {
+      try {
+        this.canvasRenderer = new CanvasWheelRenderer(this.container.id);
+      } catch (error) {
+        console.warn('Failed to initialize Canvas renderer, falling back to CSS:', error);
+        this.canvasSupported = false;
+        this.initializeCSSRenderer();
+      }
+    } else {
+      this.initializeCSSRenderer();
+    }
+  }
+
+  private initializeCSSRenderer(): void {
+    // Create needle element for CSS rendering
     this.needleElement = document.createElement('div');
     this.needleElement.id = 'needle';
     this.needleElement.style.position = 'absolute';
@@ -145,7 +184,7 @@ export class WheelRenderer {
     
     return {
       index,
-      text: texts[index] || ''
+      text: texts[index] || '',
     };
   }
 
@@ -164,9 +203,148 @@ export class WheelRenderer {
   }
 
   /**
+   * Enhanced wheel rendering with Canvas support and CSS fallback
+   */
+  public renderEnhancedWheel(options: EnhancedWheelRenderOptions): void {
+    const { useCanvas = true } = options;
+    
+    if (this.canvasSupported && this.canvasRenderer && useCanvas) {
+      this.renderWithCanvas(options);
+    } else {
+      this.renderWithCSS(options);
+    }
+  }
+
+  private renderWithCanvas(options: EnhancedWheelRenderOptions): void {
+    if (!this.canvasRenderer) {return;}
+
+    const canvasOptions: CanvasRenderOptions = {
+      wheelId: options.wheelId,
+      wheel: options.wheel,
+      showLabels: options.showLabels ?? true,
+      showProbabilityIndicators: options.showProbabilityIndicators ?? false,
+      ...(options.highlightedWedgeId && { highlightedWedgeId: options.highlightedWedgeId }),
+      animationProgress: options.animationProgress ?? 0,
+    };
+
+    this.canvasRenderer.renderWheel(canvasOptions);
+  }
+
+  private renderWithCSS(options: EnhancedWheelRenderOptions): void {
+    const { wheelId, wheel } = options;
+    
+    // Convert enhanced options to legacy format
+    const legacyOptions: WheelRenderOptions = {
+      wheelId,
+      wedgeCount: wheel.wedges.length,
+      texts: wheel.wedges.map(w => w.label),
+      colors: wheel.wedges.map(w => w.color),
+      radius: wheel.radius,
+    };
+
+    this.createWheel(legacyOptions);
+    this.updateWheelRotation(wheelId, wheel.currentAngle);
+  }
+
+  /**
+   * Updates wheel rotation with Canvas support
+   */
+  public updateEnhancedWheelRotation(wheelId: string, angle: number, velocity: number = 0): void {
+    if (this.canvasSupported && this.canvasRenderer) {
+      this.canvasRenderer.updateWheelRotation(wheelId, angle, velocity);
+    } else {
+      this.updateWheelRotation(wheelId, angle);
+    }
+  }
+
+  /**
+   * Adds visual effects (Canvas only)
+   */
+  public addVisualEffect(wheelId: string, effect: { type: 'glow' | 'pulse' | 'sparkle' | 'highlight'; intensity: number; color?: string }): void {
+    if (this.canvasSupported && this.canvasRenderer) {
+      this.canvasRenderer.addVisualEffect(wheelId, effect);
+    }
+    // CSS fallback could add CSS classes for basic effects
+  }
+
+  /**
+   * Clears visual effects
+   */
+  public clearVisualEffects(wheelId: string): void {
+    if (this.canvasSupported && this.canvasRenderer) {
+      this.canvasRenderer.clearVisualEffects(wheelId);
+    }
+  }
+
+  /**
+   * Starts animation loop for smooth rendering
+   */
+  public startAnimationLoop(): void {
+    if (this.canvasSupported && this.canvasRenderer) {
+      this.canvasRenderer.startAnimationLoop();
+    }
+  }
+
+  /**
+   * Stops animation loop
+   */
+  public stopAnimationLoop(): void {
+    if (this.canvasSupported && this.canvasRenderer) {
+      this.canvasRenderer.stopAnimationLoop();
+    }
+  }
+
+  /**
+   * Gets rendering performance metrics (Canvas only)
+   */
+  public getPerformanceMetrics(): { frameTime: number; fps: number; drawCalls: number } | null {
+    if (this.canvasSupported && this.canvasRenderer) {
+      return this.canvasRenderer.getMetrics();
+    }
+    return null;
+  }
+
+  /**
+   * Determines wedge result with enhanced accuracy
+   */
+  public determineEnhancedWedgeResult(wheelId: string, angle: number, wheel: Wheel): { index: number; wedge: Wedge } {
+    if (this.canvasSupported && this.canvasRenderer) {
+      return this.canvasRenderer.determineWedgeResult(wheelId, angle, wheel.wedges);
+    } else {
+      // Fallback to legacy method
+      const legacyResult = this.determineWedgeResult(wheelId, angle, wheel.wedges.length, wheel.wedges.map(w => w.label));
+      const wedge = wheel.wedges[legacyResult.index];
+      if (!wedge) {
+        throw new Error(`Invalid wedge index: ${legacyResult.index}`);
+      }
+      return {
+        index: legacyResult.index,
+        wedge: wedge,
+      };
+    }
+  }
+
+  /**
+   * Checks if Canvas rendering is available
+   */
+  public isCanvasSupported(): boolean {
+    return this.canvasSupported && this.canvasRenderer !== null;
+  }
+
+  /**
+   * Gets the Canvas renderer instance
+   */
+  public getCanvasRenderer(): CanvasWheelRenderer | null {
+    return this.canvasRenderer;
+  }
+
+  /**
    * Clears all wheels from the container
    */
   public clearWheels(): void {
+    if (this.canvasSupported && this.canvasRenderer) {
+      this.canvasRenderer.clear();
+    }
     this.wheels.forEach(wheel => wheel.remove());
     this.wheels.clear();
   }

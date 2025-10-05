@@ -12,7 +12,7 @@ describe('PhysicsEngine', () => {
     engine = new PhysicsEngine({
       timeStep: 1/60,
       maxIterations: 1000,
-      stabilityThreshold: 0.01
+      stabilityThreshold: 0.01,
     });
   });
 
@@ -20,7 +20,7 @@ describe('PhysicsEngine', () => {
     test('should add wheel with default state', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       engine.addWheel('wheel1', config);
@@ -36,12 +36,12 @@ describe('PhysicsEngine', () => {
     test('should add wheel with custom initial state', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 2.0,
-        frictionCoefficient: 0.2
+        frictionCoefficient: 0.2,
       };
 
       const initialState: Partial<PhysicsState> = {
         angle: Math.PI / 2,
-        angularVelocity: 5.0
+        angularVelocity: 5.0,
       };
 
       engine.addWheel('wheel1', config, initialState);
@@ -55,7 +55,7 @@ describe('PhysicsEngine', () => {
     test('should remove wheel and cleanup clutch connections', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       engine.addWheel('outer', config);
@@ -77,13 +77,13 @@ describe('PhysicsEngine', () => {
     beforeEach(() => {
       const outerConfig: WheelPhysicsConfig = {
         momentOfInertia: 2.0,
-        frictionCoefficient: 0.05
+        frictionCoefficient: 0.05,
       };
 
       const innerConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
         frictionCoefficient: 0.1,
-        clutchRatio: 0.5
+        clutchRatio: 0.5,
       };
 
       engine.addWheel('outer', outerConfig);
@@ -117,13 +117,13 @@ describe('PhysicsEngine', () => {
         
         const outerConfig: WheelPhysicsConfig = {
           momentOfInertia: 1.0,
-          frictionCoefficient: 0.0 // No friction for pure clutch test
+          frictionCoefficient: 0.0, // No friction for pure clutch test
         };
 
         const innerConfig: WheelPhysicsConfig = {
           momentOfInertia: 1.0,
           frictionCoefficient: 0.0,
-          clutchRatio: clutchRatio
+          clutchRatio: clutchRatio,
         };
 
         engine.addWheel('outer', outerConfig);
@@ -160,7 +160,7 @@ describe('PhysicsEngine', () => {
     test('should apply friction proportional to angular velocity', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       engine.addWheel('wheel1', config);
@@ -181,7 +181,7 @@ describe('PhysicsEngine', () => {
     test('should stop wheel when velocity drops below stability threshold', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 1.0 // High friction
+        frictionCoefficient: 1.0, // High friction
       };
 
       engine.addWheel('wheel1', config);
@@ -196,12 +196,12 @@ describe('PhysicsEngine', () => {
     test('should handle different friction coefficients', () => {
       const lowFrictionConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.01
+        frictionCoefficient: 0.01,
       };
 
       const highFrictionConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       engine.addWheel('lowFriction', lowFrictionConfig);
@@ -227,7 +227,7 @@ describe('PhysicsEngine', () => {
     test('should integrate velocity before position (semi-implicit)', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.0 // No friction for pure integration test
+        frictionCoefficient: 0.0, // No friction for pure integration test
       };
 
       engine.addWheel('wheel1', config);
@@ -254,7 +254,7 @@ describe('PhysicsEngine', () => {
     test('should normalize angles to [0, 2π] range', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.0
+        frictionCoefficient: 0.0,
       };
 
       engine.addWheel('wheel1', config);
@@ -280,7 +280,7 @@ describe('PhysicsEngine', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
         frictionCoefficient: 0.1,
-        clutchRatio: 0.5
+        clutchRatio: 0.5,
       };
 
       // First simulation
@@ -315,7 +315,7 @@ describe('PhysicsEngine', () => {
     test('should detect when all wheels have stopped', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.5 // High friction to stop quickly
+        frictionCoefficient: 0.5, // High friction to stop quickly
       };
 
       engine.addWheel('wheel1', config);
@@ -340,7 +340,7 @@ describe('PhysicsEngine', () => {
     test('should consider wheels stable when below threshold', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       engine.addWheel('wheel1', config);
@@ -354,7 +354,7 @@ describe('PhysicsEngine', () => {
     test('should apply torque correctly', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 2.0,
-        frictionCoefficient: 0.0
+        frictionCoefficient: 0.0,
       };
 
       engine.addWheel('wheel1', config);
@@ -396,7 +396,7 @@ describe('PhysicsEngine', () => {
     test('should reset all wheels to initial state', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       engine.addWheel('wheel1', config);
@@ -423,7 +423,7 @@ describe('PhysicsEngine', () => {
     test('should handle zero moment of inertia gracefully', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 0.0001, // Very small but not zero
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       expect(() => {
@@ -436,7 +436,7 @@ describe('PhysicsEngine', () => {
     test('should handle negative friction coefficient', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: -0.1 // Negative friction (acceleration)
+        frictionCoefficient: -0.1, // Negative friction (acceleration)
       };
 
       engine.addWheel('wheel1', config);
@@ -455,7 +455,7 @@ describe('PhysicsEngine', () => {
     test('should handle very large time steps', () => {
       const config: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.1
+        frictionCoefficient: 0.1,
       };
 
       engine.addWheel('wheel1', config);

@@ -57,7 +57,7 @@ export class AudioEngine {
       musicVolume: 0.5,
       enabled: true,
       soundEffectsEnabled: true,
-      musicEnabled: true
+      musicEnabled: true,
     };
   }
 
@@ -85,7 +85,7 @@ export class AudioEngine {
     this.currentTheme = theme;
     const soundsToLoad: SoundEffect[] = [
       ...Object.values(theme.soundEffects),
-      ...(theme.backgroundMusic ? [theme.backgroundMusic] : [])
+      ...(theme.backgroundMusic ? [theme.backgroundMusic] : []),
     ];
 
     const loadPromises = soundsToLoad.map(sound => this.loadSound(sound));
@@ -186,7 +186,7 @@ export class AudioEngine {
     this.stopBackgroundMusic();
     this.playSoundEffect(this.currentTheme.backgroundMusic.id, {
       volume: this.currentTheme.backgroundMusic.volume || 1.0,
-      loop: true
+      loop: true,
     });
 
     this.backgroundMusicSource = this.activeSources.get(this.currentTheme.backgroundMusic.id) || null;
@@ -248,7 +248,7 @@ export class AudioEngine {
     if (this.masterGainNode && this.audioContext) {
       this.masterGainNode.gain.setValueAtTime(
         this.config.masterVolume,
-        this.audioContext.currentTime
+        this.audioContext.currentTime,
       );
     }
   }
@@ -258,7 +258,7 @@ export class AudioEngine {
       if (this.audioContext && soundId !== this.currentTheme?.backgroundMusic?.id) {
         gainNode.gain.setValueAtTime(
           this.config.soundEffectsVolume,
-          this.audioContext.currentTime
+          this.audioContext.currentTime,
         );
       }
     });

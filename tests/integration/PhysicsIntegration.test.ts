@@ -12,13 +12,13 @@ describe('Physics Engine Integration', () => {
       
       const outerConfig: WheelPhysicsConfig = {
         momentOfInertia: 2.0,
-        frictionCoefficient: 0.02
+        frictionCoefficient: 0.02,
       };
 
       const innerConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
         frictionCoefficient: 0.05,
-        clutchRatio: 0.7 // 70% torque transfer
+        clutchRatio: 0.7, // 70% torque transfer
       };
 
       engine.addWheel('outer', outerConfig);
@@ -56,7 +56,7 @@ describe('Physics Engine Integration', () => {
         const engine = new PhysicsEngine();
         const config: WheelPhysicsConfig = {
           momentOfInertia: 1.0,
-          frictionCoefficient: 0.1
+          frictionCoefficient: 0.1,
         };
 
         engine.addWheel('wheel', config);
@@ -76,7 +76,7 @@ describe('Physics Engine Integration', () => {
         return {
           initialVelocity,
           finalAngle: engine.getWheelState('wheel')!.angle,
-          steps
+          steps,
         };
       };
 
@@ -98,7 +98,7 @@ describe('Physics Engine Integration', () => {
         const config: WheelPhysicsConfig = {
           momentOfInertia: 1.0 + i * 0.1,
           frictionCoefficient: 0.05 + i * 0.01,
-          ...(i > 0 && { clutchRatio: 0.5 })
+          ...(i > 0 && { clutchRatio: 0.5 }),
         };
 
         engine.addWheel(`wheel${i}`, config);
@@ -132,13 +132,13 @@ describe('Physics Engine Integration', () => {
       
       const outerConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.0 // No friction for pure test
+        frictionCoefficient: 0.0, // No friction for pure test
       };
 
       const innerConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
         frictionCoefficient: 0.0,
-        clutchRatio: 0.0 // No torque transfer
+        clutchRatio: 0.0, // No torque transfer
       };
 
       engine.addWheel('outer', outerConfig);
@@ -167,13 +167,13 @@ describe('Physics Engine Integration', () => {
       
       const outerConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
-        frictionCoefficient: 0.0
+        frictionCoefficient: 0.0,
       };
 
       const innerConfig: WheelPhysicsConfig = {
         momentOfInertia: 1.0,
         frictionCoefficient: 0.0,
-        clutchRatio: 1.0 // Maximum torque transfer
+        clutchRatio: 1.0, // Maximum torque transfer
       };
 
       engine.addWheel('outer', outerConfig);
@@ -208,7 +208,7 @@ describe('Physics Engine Integration', () => {
         const engine = new PhysicsEngine();
         const config: WheelPhysicsConfig = {
           momentOfInertia: 1.0,
-          frictionCoefficient: frictionCoeff
+          frictionCoefficient: frictionCoeff,
         };
 
         engine.addWheel('wheel', config);
@@ -247,7 +247,7 @@ describe('Physics Engine Integration', () => {
         weights,
         50000, // Large sample size
         0.01,  // Tight tolerance
-        12345  // Deterministic seed
+        12345,  // Deterministic seed
       );
 
       expect(result.passed).toBe(true);
@@ -271,7 +271,7 @@ describe('Physics Engine Integration', () => {
         const engine = new PhysicsEngine();
         const config: WheelPhysicsConfig = {
           momentOfInertia: 1.0,
-          frictionCoefficient: 0.02
+          frictionCoefficient: 0.02,
         };
 
         engine.addWheel('wheel', config);
@@ -280,7 +280,7 @@ describe('Physics Engine Integration', () => {
         const testCases = [
           { power: 0, expectedMinVelocity: 0.4, expectedMaxVelocity: 0.6 },
           { power: 50, expectedMinVelocity: 1.8, expectedMaxVelocity: 2.6 },
-          { power: 100, expectedMinVelocity: 7.5, expectedMaxVelocity: 8.5 }
+          { power: 100, expectedMinVelocity: 7.5, expectedMaxVelocity: 8.5 },
         ];
 
         testCases.forEach(({ power, expectedMinVelocity, expectedMaxVelocity }) => {
@@ -289,7 +289,7 @@ describe('Physics Engine Integration', () => {
             containerId: 'test-power-meter',
             minAngularVelocity: 0.5,
             maxAngularVelocity: 8.0,
-            powerCurve: 'quadratic'
+            powerCurve: 'quadratic',
           });
 
           const velocity = powerMeter.powerToAngularVelocity(power);
@@ -318,7 +318,7 @@ describe('Physics Engine Integration', () => {
         // Create PowerMeter with timing feedback
         const powerMeter = new (require('../../src/components/PowerMeter').PowerMeter)({
           containerId: 'test-timing-meter',
-          showTimingFeedback: true
+          showTimingFeedback: true,
         });
 
         // Test timing feedback for different power levels
@@ -326,7 +326,7 @@ describe('Physics Engine Integration', () => {
           { power: 50, expectedZone: 'perfect', expectedAccuracy: 1.0 },
           { power: 60, expectedZone: 'excellent', minAccuracy: 0.8 },
           { power: 70, expectedZone: 'good', minAccuracy: 0.6 },
-          { power: 10, expectedZone: 'poor', maxAccuracy: 0.6 }
+          { power: 10, expectedZone: 'poor', maxAccuracy: 0.6 },
         ];
 
         timingTests.forEach(({ power, expectedZone, expectedAccuracy, minAccuracy, maxAccuracy }) => {
