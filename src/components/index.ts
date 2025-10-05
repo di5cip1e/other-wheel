@@ -6,4 +6,5 @@
 export { WheelRenderer, type WheelRenderOptions } from './WheelRenderer';
 export { PowerMeter, type PowerMeterOptions, type PowerMeterCallbacks } from './PowerMeter';
 export { WheelEditor, type WheelEditorOptions, type WheelEditorCallbacks } from './WheelEditor';
-export { GameController, type GameControllerOptions } from './GameController';
+export { GameController, type GameControllerOptions, type GameControllerCallbacks } from './GameController';
+export { PlayerUI, type PlayerUIConfig } from './PlayerUI';

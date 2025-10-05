@@ -20,6 +20,7 @@ export interface PowerMeterOptions {
 export interface PowerMeterCallbacks {
   onStart?: () => void;
   onStop?: (power: number, angularVelocity: number, timingAccuracy: number) => void;
+  onTick?: () => void; // Called when power meter oscillates (for audio feedback)
 }
 
 export interface TimingFeedback {
@@ -40,6 +41,8 @@ export class PowerMeter {
   private callbacks: PowerMeterCallbacks;
   private options: Required<PowerMeterOptions>;
   private startTime: number = 0;
+  private previousValue: number = 50;
+  private lastTickTime: number = 0;
 
   constructor(options: PowerMeterOptions, callbacks: PowerMeterCallbacks = {}) {
     this.options = {
@@ -202,12 +205,34 @@ export class PowerMeter {
     const elapsed = (currentTime - this.startTime) / 1000; // Convert to seconds
     
     // Calculate oscillation value based on pattern
-    this.state.value = this.calculateOscillationValue(elapsed);
+    const newValue = this.calculateOscillationValue(elapsed);
     
+    // Detect direction changes for tick audio (when crossing 25%, 50%, 75%)
+    this.detectTicks(this.state.value, newValue, currentTime);
+    
+    this.state.value = newValue;
     this.updateIndicatorPosition();
     this.updatePowerDisplay();
     
     this.animationFrame = requestAnimationFrame(() => this.animate());
+  }
+
+  private detectTicks(oldValue: number, newValue: number, currentTime: number): void {
+    // Only play ticks if enough time has passed (throttle to avoid too many sounds)
+    if (currentTime - this.lastTickTime < 100) return; // Minimum 100ms between ticks
+    
+    const tickPoints = [25, 50, 75];
+    
+    for (const point of tickPoints) {
+      // Check if we crossed this tick point
+      if ((oldValue < point && newValue >= point) || (oldValue > point && newValue <= point)) {
+        if (this.callbacks.onTick) {
+          this.callbacks.onTick();
+        }
+        this.lastTickTime = currentTime;
+        break; // Only one tick per frame
+      }
+    }
   }
 
   private calculateOscillationValue(elapsed: number): number {

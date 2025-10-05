@@ -4,6 +4,7 @@
  */
 
 import { Wedge, WedgeMedia } from '../models';
+import { mediaManager, MediaValidationResult as MediaManagerValidationResult } from '../managers/MediaManager';
 
 export interface WedgeEditorOptions {
   containerId: string;
@@ -237,14 +238,26 @@ export class WedgeEditor {
       return;
     }
     
-    // URL input
+    // URL input with validation
     const urlContainer = this.createTextInput(
       'Media URL',
       this.wedge.media.src,
       'URL or path to the media file',
-      (value) => {
+      async (value) => {
         if (this.wedge.media) {
           this.wedge.media.src = value;
+          
+          // Validate media if URL is provided
+          if (value.trim()) {
+            const validation = mediaManager.validateMedia(this.wedge.media);
+            if (!validation.isValid) {
+              this.showMessage(`Invalid media: ${validation.error}`, 'warning');
+              if (validation.suggestedType) {
+                this.showMessage(`Suggested type: ${validation.suggestedType}`, 'info');
+              }
+            }
+          }
+          
           this.updateMediaPreview();
           this.triggerUpdate();
         }
@@ -431,19 +444,27 @@ export class WedgeEditor {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
     
-    if (file && this.callbacks.onMediaUpload) {
-      try {
-        const url = await this.callbacks.onMediaUpload(file);
-        if (this.wedge.media) {
-          this.wedge.media.src = url;
-          this.updateMediaContentInput();
-          this.updateMediaPreview();
-          this.triggerUpdate();
-        }
-      } catch (error) {
-        console.error('File upload failed:', error);
-        alert('File upload failed. Please try again.');
-      }
+    if (!file) return;
+    
+    try {
+      // Use MediaManager to create media from file
+      const media = await mediaManager.createMediaFromFile(file);
+      
+      // Update wedge with new media
+      this.wedge.media = media;
+      
+      // Update UI
+      this.updateMediaContentInput();
+      this.updateMediaPreview();
+      this.triggerUpdate();
+      
+      // Show success message
+      this.showMessage('File uploaded successfully!', 'success');
+      
+    } catch (error) {
+      console.error('File upload failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'File upload failed. Please try again.';
+      this.showMessage(errorMessage, 'error');
     }
   }
 
@@ -477,12 +498,19 @@ export class WedgeEditor {
     preview.appendChild(labelElement);
   }
 
-  private updateMediaPreview(): void {
+  private async updateMediaPreview(): Promise<void> {
     if (!this.mediaPreviewContainer) return;
     
     this.mediaPreviewContainer.innerHTML = '';
     
     if (!this.wedge.media || !this.wedge.media.src) {
+      const noMediaMsg = document.createElement('p');
+      noMediaMsg.textContent = 'No media selected';
+      noMediaMsg.style.color = '#6c757d';
+      noMediaMsg.style.fontStyle = 'italic';
+      noMediaMsg.style.textAlign = 'center';
+      noMediaMsg.style.padding = '20px';
+      this.mediaPreviewContainer.appendChild(noMediaMsg);
       return;
     }
     
@@ -490,35 +518,65 @@ export class WedgeEditor {
     previewTitle.textContent = 'Media Preview:';
     this.mediaPreviewContainer.appendChild(previewTitle);
     
-    if (this.wedge.media.type === 'image') {
-      const img = document.createElement('img');
-      img.src = this.wedge.media.src;
-      img.alt = this.wedge.media.alt || this.wedge.label;
-      img.style.maxWidth = '200px';
-      img.style.maxHeight = '150px';
-      img.style.objectFit = 'contain';
-      img.onerror = () => {
-        img.style.display = 'none';
+    // Show loading state
+    const loadingMsg = document.createElement('p');
+    loadingMsg.textContent = 'Loading media...';
+    loadingMsg.style.color = '#6c757d';
+    loadingMsg.style.textAlign = 'center';
+    loadingMsg.style.padding = '10px';
+    this.mediaPreviewContainer.appendChild(loadingMsg);
+    
+    try {
+      // Use MediaManager to load media
+      const result = await mediaManager.loadMedia(this.wedge.media);
+      
+      // Remove loading message
+      this.mediaPreviewContainer.removeChild(loadingMsg);
+      
+      if (result.success && result.element) {
+        const element = result.element.cloneNode(true) as HTMLImageElement | HTMLVideoElement;
+        
+        // Apply preview styling
+        element.style.maxWidth = '200px';
+        element.style.maxHeight = '150px';
+        element.style.objectFit = 'contain';
+        element.style.border = '1px solid #dee2e6';
+        element.style.borderRadius = '4px';
+        element.style.display = 'block';
+        element.style.margin = '0 auto';
+        
+        if (element instanceof HTMLVideoElement) {
+          element.controls = true;
+          element.muted = true;
+        }
+        
+        this.mediaPreviewContainer.appendChild(element);
+        
+        if (result.fallbackUsed) {
+          this.showMessage('Media loaded with fallback', 'warning');
+        }
+      } else {
         const errorMsg = document.createElement('p');
-        errorMsg.textContent = 'Failed to load image';
-        errorMsg.style.color = 'red';
+        errorMsg.textContent = result.error || 'Failed to load media';
+        errorMsg.style.color = '#dc3545';
+        errorMsg.style.textAlign = 'center';
+        errorMsg.style.padding = '10px';
         this.mediaPreviewContainer.appendChild(errorMsg);
-      };
-      this.mediaPreviewContainer.appendChild(img);
-    } else if (this.wedge.media.type === 'video') {
-      const video = document.createElement('video');
-      video.src = this.wedge.media.src;
-      video.controls = true;
-      video.style.maxWidth = '200px';
-      video.style.maxHeight = '150px';
-      video.onerror = () => {
-        video.style.display = 'none';
-        const errorMsg = document.createElement('p');
-        errorMsg.textContent = 'Failed to load video';
-        errorMsg.style.color = 'red';
-        this.mediaPreviewContainer.appendChild(errorMsg);
-      };
-      this.mediaPreviewContainer.appendChild(video);
+      }
+    } catch (error) {
+      // Remove loading message
+      if (loadingMsg.parentElement) {
+        this.mediaPreviewContainer.removeChild(loadingMsg);
+      }
+      
+      const errorMsg = document.createElement('p');
+      errorMsg.textContent = 'Error loading media preview';
+      errorMsg.style.color = '#dc3545';
+      errorMsg.style.textAlign = 'center';
+      errorMsg.style.padding = '10px';
+      this.mediaPreviewContainer.appendChild(errorMsg);
+      
+      console.error('Media preview error:', error);
     }
   }
 
@@ -594,6 +652,66 @@ export class WedgeEditor {
       errors,
       warnings
     };
+  }
+
+  private showMessage(message: string, type: 'success' | 'error' | 'warning' | 'info'): void {
+    // Remove any existing messages
+    const existingMessage = this.container.querySelector('.wedge-editor-message');
+    if (existingMessage) {
+      existingMessage.remove();
+    }
+    
+    const messageElement = document.createElement('div');
+    messageElement.className = `wedge-editor-message wedge-editor-message-${type}`;
+    messageElement.textContent = message;
+    
+    // Style the message
+    messageElement.style.padding = '10px';
+    messageElement.style.marginBottom = '15px';
+    messageElement.style.borderRadius = '4px';
+    messageElement.style.fontSize = '14px';
+    messageElement.style.fontWeight = '500';
+    
+    switch (type) {
+      case 'success':
+        messageElement.style.backgroundColor = '#d4edda';
+        messageElement.style.color = '#155724';
+        messageElement.style.border = '1px solid #c3e6cb';
+        break;
+      case 'error':
+        messageElement.style.backgroundColor = '#f8d7da';
+        messageElement.style.color = '#721c24';
+        messageElement.style.border = '1px solid #f5c6cb';
+        break;
+      case 'warning':
+        messageElement.style.backgroundColor = '#fff3cd';
+        messageElement.style.color = '#856404';
+        messageElement.style.border = '1px solid #ffeaa7';
+        break;
+      case 'info':
+        messageElement.style.backgroundColor = '#d1ecf1';
+        messageElement.style.color = '#0c5460';
+        messageElement.style.border = '1px solid #bee5eb';
+        break;
+    }
+    
+    // Insert at the top of the container
+    this.container.insertBefore(messageElement, this.container.firstChild);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (messageElement.parentElement) {
+        messageElement.remove();
+      }
+    }, 5000);
+  }
+
+  public getSupportedMediaTypes(): { images: string[]; videos: string[] } {
+    return mediaManager.getSupportedTypes();
+  }
+
+  public async validateMedia(media: WedgeMedia): Promise<MediaManagerValidationResult> {
+    return mediaManager.validateMedia(media);
   }
 
   public destroy(): void {

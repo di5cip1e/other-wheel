@@ -25,5 +25,11 @@ module.exports = {
     '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
     '^@/managers/(.*)$': '<rootDir>/src/managers/$1',
   },
+  extensionsToTreatAsEsm: ['.ts'],
+  globals: {
+    'ts-jest': {
+      useESM: true
+    }
+  },
   testTimeout: 10000,
 };
